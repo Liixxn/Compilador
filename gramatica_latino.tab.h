@@ -58,7 +58,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 26 "gramatica_latino.y"
+#line 25 "gramatica_latino.y"
 
   int enteroVal;
   float realVal;

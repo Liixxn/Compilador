@@ -19,7 +19,6 @@ extern tSimbolos tabla[256];
 extern int indice; //Se almacena el índice de la tabla de tSimbolos
 char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear el tipo que se detecta en flex al tipo del nodo
 
-
 %}
 
 /*Definicion de tipos y estructuras empleadas*/
@@ -133,7 +132,7 @@ asignacion:
 
         indice++;
         }
-        printf("Contenido de cadenaaa: %s\n", $3.n->tipo);
+        printf("Contenido de cadenaaa: %s\n", $3.tipo);
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
     }
 ;
@@ -151,14 +150,16 @@ expresion:
         if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) { //comprobacion del tipo
             printf("> [OPERACION] - SUMA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2); 
-            $$.tipo = tipos[0]; $$.numerico = $1.numerico + $3.numerico;      
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico + $3.numerico;      
         }
 
         //Suma de numericoDecimal + numericoDecimal
         else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - SUMA {numericoDecimal / numericoDecimal}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
-            $$.tipo = tipos[1]; $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
         }  
     }
     //RESTA
@@ -168,13 +169,15 @@ expresion:
         if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - RESTA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 3);
-            $$.tipo = tipos[0]; $$.numerico = $1.numerico + $3.numerico;
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico + $3.numerico;
         }
         //Resta de numericoDecimal - numericoDecimal
         else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - RESTA {numericoDecimal / numericoDecimal}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 3);
-            $$.tipo = tipos[1]; $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
         }
 
     }
@@ -196,18 +199,19 @@ tipos:
             int pos = buscarTabla(indice, $1, tabla);
             //Para si es de tipo numerico
             if(tabla[pos].tipo==tipos[0]){
-                $$.tipo = tabla[pos].tipo; $$.numerico=tabla[pos].numerico; 
-                $$.n = crearVariableTerminal(tabla[pos].numerico, tabla[pos].registro);  //Creamos un nodo terminal con los numeros   
+                $$.tipo = tabla[pos].tipo; 
+                $$.numerico=tabla[pos].numerico; 
+                $$.n = crearVariableTerminal(tabla[pos].numerico, tabla[pos].registro, tabla[pos].tipo);  //Creamos un nodo terminal con los numeros   
             }
             //Para si es de tipo numericoDecimal
             else if(tabla[pos].tipo==tipos[1]){
                 $$.tipo = tabla[pos].tipo; $$.numericoDecimal=tabla[pos].numericoDecimal;
-                $$.n = crearVariableTerminal(tabla[pos].numericoDecimal, tabla[pos].registro); //Creamos un nodo terminal con los numeros        
+                $$.n = crearVariableTerminal(tabla[pos].numericoDecimal, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con los numeros        
             }
             //Para si es de tipo texto
             else if (tabla[pos].tipo==tipos[2]){
                 $$.tipo = tabla[pos].tipo; 
-                $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro); //Creamos un nodo terminal con las cadenas{
+                $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
 
             }
         }
@@ -220,7 +224,7 @@ tipos:
         
         $$.tipo = tipos[0];
 
-        $$.n = crearNodoTerminal($1, tipos[1]); 
+        $$.n = crearNodoTerminal($1, tipos[0]);
         
     }
 
@@ -228,6 +232,7 @@ tipos:
     | NUMERICODECIMAL {
         $$.numericoDecimal = $1;
         printf("\n> [TIPO] - NumericoDecimal: %.3f\n", $$.numericoDecimal); 
+
         $$.tipo = tipos[1];
 
         $$.n = crearNodoTerminal($1, tipos[1]); 
@@ -237,6 +242,7 @@ tipos:
     | CADENA {
         $$.texto = $1;
         printf("\n> [TIPO] - Cadena de texto: %s\n", $1);
+
         $$.tipo = tipos[2];
 
         $$.n = crearNodoTerminalString($1, tipos[2]); 
