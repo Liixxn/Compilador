@@ -118,8 +118,137 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
   //TIPO NODO 22 - Lista de sentencias
   } else if (n->tipoNodo == 7) {
     dato = comprobarValorNodo(n->izq, contadorEtiquetaLocal); 
+    comprobarValorNodo(n->dcha, contadorEtiquetaLocal);
+
+   //TIPO NODO 22 - Lista de sentencias
+  } else if (n->tipoNodo == 7) {
+    dato = comprobarValorNodo(n->izq, contadorEtiquetaLocal); 
     comprobarValorNodo(n->dcha, contadorEtiquetaLocal);   
+
+  // Nueva división
+  } else if (n->tipoNodo == 8){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor / comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    fprintf(yyout, "div.s $f%d, $f%d, $f%d\n", n->resultado, n->izq->resultado, n->dcha->resultado); //se utiliza div.s para - en ASM
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true) 
+  
+  // Nueva multiplicación
+  } else if (n->tipoNodo == 9){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor * comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    fprintf(yyout, "mul.s $f%d, $f%d, $f%d\n", n->resultado, n->izq->resultado, n->dcha->resultado); //se utiliza mul.s para * en ASM
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+  
+  // Nueva MAYORQUE
+  } else if (n->tipoNodo == 10){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor > comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+
+    // Comparación usando c.lt.s y salto condicional
+    fprintf(yyout, "c.lt.s $f%d, $f%d\n", n->dcha->resultado, n->izq->resultado);
+    fprintf(yyout, "  bc1t es_mayor_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_mayor_%d\n", n->izq->resultado);
+    fprintf(yyout, "    es_mayor_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_mayor_%d:\n", n->izq->resultado);
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+  // Nueva MAYOR_IGUAL_QUE
+  } else if (n->tipoNodo == 11){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor >= comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    // Comparación usando c.lt.s y salto condicional
+    fprintf(yyout, "c.le.s $f%d, $f%d\n", n->dcha->resultado, n->izq->resultado);
+    fprintf(yyout, "  bc1t es_mayor_o_igual_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_mayor_o_igual_%d\n", n->izq->resultado);
+    fprintf(yyout, "    es_mayor_o_igual_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_mayor_o_igual_%d:\n", n->izq->resultado);
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+  
+  // Nueva MENOR_QUE
+  } else if (n->tipoNodo == 12){
+    dato.valor = !(comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor < comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor);
+    
+    // Comparación usando c.lt.s y salto condicional
+    fprintf(yyout, "c.lt.s $f%d, $f%d\n", n->izq->resultado, n->dcha->resultado);
+    fprintf(yyout, "  bc1t es_menor_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_menor_%d\n", n->izq->resultado);
+    fprintf(yyout, "    es_menor_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_menor_%d:\n", n->izq->resultado);
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+  
+  // Nueva MENOR_IGUAL_QUE
+  } else if (n->tipoNodo == 13){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor <= comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    
+    // Comparación usando c.lt.s y salto condicional
+    fprintf(yyout, "c.le.s $f%d, $f%d\n", n->izq->resultado, n->dcha->resultado);
+    fprintf(yyout, "  bc1t es_menor_o_igual_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_menor_o_igual_%d\n", n->izq->resultado);
+    fprintf(yyout, "    es_menor_o_igual_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_menor_o_igual_%d:\n", n->izq->resultado);
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+  
+  // Nueva IGIUAL_IGUAL
+  } else if (n->tipoNodo == 14){
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor == comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    // Comparación usando c.lt.s y salto condicional
+    fprintf(yyout, "c.eq.s $f%d, $f%d\n", n->izq->resultado, n->dcha->resultado);
+    fprintf(yyout, "  bc1t son_iguales_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_igual_%d\n", n->izq->resultado);
+    fprintf(yyout, "    son_iguales_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_igual_%d:\n", n->izq->resultado);
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+  
+  //Nueva NO_IGUAL
+  }else if (n->tipoNodo == 15){
+   // printf("---------------pppunaaaa: %s\n", n->izq->tipo);//NO FUNCIONA
+    // if (n->izq->tipo != NULL || n->dcha->tipo != NULL) {
+    //    printf("---------------unooooo: %s\n", n->izq->tipo);//NO FUNCIONA
+    // } else{
+      // Comparación usando c.lt.s y salto condicional
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor != comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    fprintf(yyout, "c.eq.s $f%d, $f%d\n", n->izq->resultado, n->dcha->resultado);
+    fprintf(yyout, "  bc1t son_distintos_%d\n", n->izq->resultado);
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "      j fin_son_distintos_%d\n", n->izq->resultado);
+    fprintf(yyout, "    son_distintos_%d:\n", n->izq->resultado);
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado);
+    fprintf(yyout, "    fin_son_distintos_%d:\n", n->izq->resultado);
+    //   printf("---------------dooos: %d + %d\n", n->izq->resultado, n->dcha->resultado);
+    // }
+    
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
   }
+
   return dato; //Devolvemos el valor
 }
 

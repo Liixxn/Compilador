@@ -40,14 +40,22 @@
    enum yytokentype {
      SUMA = 258,
      RESTA = 259,
-     IGUAL = 260,
-     APERTURAPARENTESIS = 261,
-     CIERREPARENTESIS = 262,
-     IMPRIMIR = 263,
-     NUMERICO = 264,
-     NUMERICODECIMAL = 265,
-     IDENTIFICADOR = 266,
-     CADENA = 267
+     MULTIPLICACION = 260,
+     DIVISION = 261,
+     IGUAL = 262,
+     APERTURAPARENTESIS = 263,
+     CIERREPARENTESIS = 264,
+     IMPRIMIR = 265,
+     MAYOR_QUE = 266,
+     MENOR_QUE = 267,
+     MAYOR_IGUAL_QUE = 268,
+     MENOR_IGUAL_QUE = 269,
+     IGUAL_IGUAL = 270,
+     NO_IGUAL = 271,
+     NUMERICO = 272,
+     NUMERICODECIMAL = 273,
+     IDENTIFICADOR = 274,
+     CADENA = 275
    };
 #endif
 
@@ -75,7 +83,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 79 "gramatica_latino.tab.h"
+#line 87 "gramatica_latino.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

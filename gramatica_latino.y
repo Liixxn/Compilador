@@ -37,7 +37,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 }
 
 /*Declaración de los TOKENS*/
-%token SUMA RESTA IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR 
+%token SUMA RESTA MULTIPLICACION DIVISION IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE IGUAL_IGUAL NO_IGUAL
 
 /*Declaración de los TOKENS que provienen de FLEX con su respectivo tipo*/
 %token <enteroVal> NUMERICO 
@@ -49,7 +49,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 %type <tr> sentencias sentencia tipos expresion asignacion imprimir  
 
 /*Declaración de la precedencia siendo menor la del primero y mayor la del último*/
-%left SUMA RESTA
+%left SUMA RESTA MULTIPLICACION DIVISION MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE
 
 
 %start codigo
@@ -151,7 +151,7 @@ expresion:
             printf("> [OPERACION] - SUMA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2); 
             $$.tipo = tipos[0]; 
-            $$.numerico = $1.numerico + $3.numerico;      
+            $$.numerico = $1.numerico + $3.numerico;  
         }
 
         //Suma de numericoDecimal + numericoDecimal
@@ -170,16 +170,175 @@ expresion:
             printf("> [OPERACION] - RESTA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 3);
             $$.tipo = tipos[0]; 
-            $$.numerico = $1.numerico + $3.numerico;
+            $$.numerico = $1.numerico - $3.numerico;
         }
         //Resta de numericoDecimal - numericoDecimal
         else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - RESTA {numericoDecimal / numericoDecimal}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 3);
             $$.tipo = tipos[1]; 
-            $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
+            $$.numericoDecimal = $1.numericoDecimal - $3.numericoDecimal;
         }
 
+    }
+    //MULTIPLICACION
+    | expresion MULTIPLICACION tipos {
+        
+        //Multiplicación de numerico * numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - MULTIPLICACION {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 9);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico * $3.numerico;
+        }
+        //Multiplicación de numericoDecimal * numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - MULTIPLICACION {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 9);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal * $3.numericoDecimal;
+        }
+
+    }
+    //DIVISION
+    | expresion DIVISION tipos {
+        
+        //DIVISION de numerico * numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - DIVISION {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 8);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico / $3.numerico;
+             printf("El valor de la operacion es: %d\n",  $1.numerico);
+            printf("El valor de la operacion es: %d\n",  $3.numerico);
+            printf("El valor de la operacion es: %d\n", $$.numerico); 
+        }
+        //DIVISION de numericoDecimal * numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - DIVISION {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 8);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal / $3.numericoDecimal;
+        }
+
+    }
+    //MAYOR_QUE
+    | expresion MAYOR_QUE tipos {
+        
+        //MAYOR_QUE de numerico > numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - MAYOR_QUE {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 10);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico > $3.numerico;
+        }
+        //MAYOR_QUE de numericoDecimal > numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - MAYOR_QUE {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 10);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal > $3.numericoDecimal;
+        }
+
+    }
+    //MAYOR_IGUAL_QUE
+    | expresion MAYOR_IGUAL_QUE tipos {
+        
+        //MAYOR_IGUAL_QUE de numerico > numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - MAYOR_IGUAL_QUE {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 11);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico >= $3.numerico;
+        }
+        //MAYOR_IGUAL_QUE de numericoDecimal > numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - MAYOR_IGUAL_QUE {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 11);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal >= $3.numericoDecimal;
+        }
+
+    }
+    //MENOR_QUE
+    | expresion MENOR_QUE tipos {
+        
+        //MENOR_QUE de numerico > numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - MENOR_QUE {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 12);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico < $3.numerico;
+        }
+        //MENOR_QUE de numericoDecimal > numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - MENOR_QUE {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 12);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal < $3.numericoDecimal;
+        }
+
+    }
+    //MENOR_IGUAL_QUE
+    | expresion MENOR_IGUAL_QUE tipos {
+        
+        //MENOR_IGUAL_QUE de numerico > numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - MENOR_IGUAL_QUE {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 13);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico <= $3.numerico;
+        }
+        //MENOR_IGUAL_QUE de numericoDecimal > numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - MENOR_IGUAL_QUE {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 13);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal <= $3.numericoDecimal;
+        }
+
+    }//IGUAL_IGUAL
+    | expresion IGUAL_IGUAL tipos {
+        
+        //IGUAL_IGUAL de numerico == numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - IGUAL_IGUAL {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 14);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico == $3.numerico;
+        }
+        //IGUAL_IGUAL de numericoDecimal == numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - IGUAL_IGUAL {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 14);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal == $3.numericoDecimal;
+        }
+
+    }//NO_IGUAL
+    | expresion NO_IGUAL tipos {
+        
+        //NO_IGUAL de numerico != numerico
+        if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - NO_IGUAL {numerico / numerico}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 15);
+            $$.tipo = tipos[0]; 
+            $$.numerico = $1.numerico != $3.numerico;
+        }
+        //NO_IGUAL de numericoDecimal != numericoDecimal
+        else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - NO_IGUAL {numericoDecimal / numericoDecimal}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 15);
+            $$.tipo = tipos[1]; 
+            $$.numericoDecimal = $1.numericoDecimal != $3.numericoDecimal;
+        }
+        //NO_IGUAL de string != string (texto)
+        else if (strcmp($1.tipo, tipos[2]) == 0 && strcmp($3.tipo, tipos[2]) == 0){  //comprobacion del tipo
+            printf("> [OPERACION] - NO_IGUAL {texto / texto}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 15);
+            $$.tipo = tipos[2]; 
+            $$.texto = $1.texto != $3.texto;
+        }
     }
     | tipos {$$ = $1;} //la produccion operacion puede ser tipos, un subnivel para realizar la jerarquia de operaciones
 ;

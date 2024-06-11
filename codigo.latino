@@ -1,6 +1,6 @@
 
-texto = "holaa jolieee"
-imprimir(texto)
-suma = 5 + 6
-imprimir(suma)
 
+may = 11 != 11
+imprimir(may)
+imprimir(may)
+imprimir(may)
