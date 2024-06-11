@@ -1,8 +1,6 @@
 
 
-may = 11 * 11
-imprimir(may)
-
-may = 11 * 11.2
-imprimir(may)
-
+suma = 3 + 3
+for i in range (5):
+imprimir(8)
+finFor

@@ -52,10 +52,23 @@
      MENOR_IGUAL_QUE = 269,
      IGUAL_IGUAL = 270,
      NO_IGUAL = 271,
-     NUMERICO = 272,
-     NUMERICODECIMAL = 273,
-     IDENTIFICADOR = 274,
-     CADENA = 275
+     AND = 272,
+     OR = 273,
+     WHILE = 274,
+     FIN_BUCLE = 275,
+     DOSPUNTOS = 276,
+     FOR_BUCLE = 277,
+     FIN_FOR = 278,
+     IN = 279,
+     RANGE = 280,
+     COMA = 281,
+     IF_CONDICION = 282,
+     ELSE_CONDICION = 283,
+     FIN_CONDICION = 284,
+     NUMERICO = 285,
+     NUMERICODECIMAL = 286,
+     IDENTIFICADOR = 287,
+     CADENA = 288
    };
 #endif
 
@@ -83,7 +96,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 87 "gramatica_latino.tab.h"
+#line 100 "gramatica_latino.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

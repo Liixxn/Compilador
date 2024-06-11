@@ -34,6 +34,7 @@ union astValor {
 struct valorNodoRetorno {
     double valor;
     char *texto;
+    bool booleano;
 };
 
 
@@ -120,10 +121,6 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
     dato = comprobarValorNodo(n->izq, contadorEtiquetaLocal); 
     comprobarValorNodo(n->dcha, contadorEtiquetaLocal);
 
-   //TIPO NODO 22 - Lista de sentencias
-  } else if (n->tipoNodo == 7) {
-    dato = comprobarValorNodo(n->izq, contadorEtiquetaLocal); 
-    comprobarValorNodo(n->dcha, contadorEtiquetaLocal);   
 
   // Nueva división
   } else if (n->tipoNodo == 8){
@@ -247,6 +244,88 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
     // }
     
     borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+    // Nuevo AND
+  }else if (n->tipoNodo == 16){
+    dato.booleano = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor && comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    // Comparacion si ambos son verdaderos
+    fprintf(yyout, "c.eq.s $f%d, $f%d\n", n->izq->resultado, n->dcha->resultado);
+    fprintf(yyout, "  bc1t son_iguales\n");
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      li $t0, 0\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado); //Si no son iguales, se pone a 0
+    fprintf(yyout, "      j fin_igual\n");
+    fprintf(yyout, "    son_iguales:\n");
+    fprintf(yyout, "      li $t0, 1065353216\n");
+    fprintf(yyout, "      mtc1 $t0, $f%d\n", n->resultado); //Si son iguales, se pone a 1
+    fprintf(yyout, "    fin_igual:\n");
+
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+    // Nuevo OR
+  }else if (n->tipoNodo == 17){ //Nueva OR
+    dato.booleano = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor || comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
+    // Comparacion del OR
+    fprintf(yyout,"l.s $f29, uno\n");
+    fprintf(yyout, "c.eq.s $f%d, $f29\n", n->izq->resultado);
+    fprintf(yyout, "  bc1t existe_uno\n");
+    fprintf(yyout, "    nop\n");
+    fprintf(yyout, "      c.eq.s $f%d, $f29\n", n->dcha->resultado);
+    fprintf(yyout, "      bc1t existe_uno\n");
+    fprintf(yyout, "        nop\n");
+    fprintf(yyout, "          li $t0, 0\n");
+    fprintf(yyout, "          mtc1 $t0, $f%d\n", n->resultado); //Si no existe ninguno, se pone a 0
+    fprintf(yyout, "          j fin_existe_uno\n");
+    fprintf(yyout, "        existe_uno:\n");
+    fprintf(yyout, "          li $t0, 1065353216\n");
+    fprintf(yyout, "          mtc1 $t0, $f%d\n", n->resultado); //Si existe uno, se pone a 1
+    fprintf(yyout, "      fin_existe_uno:\n");
+
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+    // Nuevo bucle while
+  }else if (n->tipoNodo == 21){
+    int etiqueta = contadorEtiquetaLocal;
+    contadorEtiquetaLocal++;
+    fprintf(yyout,"l.s $f29, zero\n");
+    fprintf(yyout, "etiqueta%d:\n", etiqueta);
+    dato = comprobarValorNodo(n->izq, contadorEtiquetaLocal);
+    printf("Rsultado: %d\n", dato);
+    fprintf(yyout, "c.eq.s $f%d, $f29\n", n->izq->resultado); //Comprobamos si el valor es 0
+
+    fprintf(yyout, "  bc1t fin_bucle%d\n", etiqueta); //Si es 0, salimos del bucle
+    fprintf(yyout, "    nop\n");
+    printf("CONTADOR ETIQUETA LOCAL: %d\n", contadorEtiquetaLocal);
+    comprobarValorNodo(n->dcha, contadorEtiquetaLocal); //Comprobamos el valor del nodo derecho
+    fprintf(yyout, "j etiqueta%d\n", etiqueta); //Volvemos a la etiqueta
+    fprintf(yyout, "fin_bucle%d:\n", etiqueta);   //Etiqueta de fin de bucle
+
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+    // Nuevo bucle for
+  } else if (n->tipoNodo == 22){  // nueva bucle for
+    int etiqueta = contadorEtiquetaLocal;
+    contadorEtiquetaLocal++;
+    fprintf(yyout,"l.s $f29, zero\n"); //cargar esto al final de zero nuevamente
+    dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor;
+    fprintf(yyout, "etiqueta%d:\n", etiqueta);
+    // Comparo si el valor de f29 es menor que el valor del nodo izq
+    fprintf(yyout, "c.lt.s $f%d, $f%d\n", 29, n->izq->resultado);
+    fprintf(yyout, "  bc1f fin_bucle%d\n", etiqueta); //Si es 0, salimos del bucle
+    fprintf(yyout, "    nop\n");
+    comprobarValorNodo(n->dcha, contadorEtiquetaLocal); //Comprobamos el valor del nodo derecho
+    // Incremento el valor de f29 en 1
+    
+    fprintf(yyout,"l.s $f30, uno\n");
+    fprintf(yyout, "add.s $f29, $f29, $f30\n");
+    fprintf(yyout, "j etiqueta%d\n", etiqueta); //Volvemos a la etiqueta
+    fprintf(yyout, "fin_bucle%d:\n", etiqueta);   //Etiqueta de fin de bucle
+
+    borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
+
+    
+  } else if (n->tipoNodo == 23){ // nueva condicion if
+
   }
 
   return dato; //Devolvemos el valor
@@ -297,6 +376,7 @@ imprimirVariables(){
   fprintf(yyout, "\n.data \n");
   fprintf(yyout, "saltoLinea: .asciiz \"\\n\"\n"); //Variable salto de linea
   fprintf(yyout, "zero: .float 0.0\n"); //Se inserta una variable auxiliar var_0 con valor 0.000
+  fprintf(yyout, "uno: .float 1.0\n"); //Se inserta una variable auxiliar var_1 con valor 1.000
   //Bucle que recorre el array de variables y las imprime en el archivo .asm
   for (int i = 0; i < 64; i++) {
       if(variables[i].disponible == true){

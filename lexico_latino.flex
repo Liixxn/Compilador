@@ -26,6 +26,21 @@ int num_linea = 1;
 "!="	                                        return NO_IGUAL;
 "="	                                            return IGUAL;
 
+":"                                             return DOSPUNTOS;
+"and"                                           return AND;
+"or"                                            return OR;
+"while"                                         return WHILE;
+"finWhile"                                      return FIN_BUCLE;
+"for"                                           return FOR_BUCLE;
+"finFor"                                        return FIN_FOR;
+"in"                                            return IN;
+"range"                                         return RANGE;
+"if"                                            return IF_CONDICION;
+"else"                                          return ELSE_CONDICION;
+"finIf"                                         return FIN_CONDICION;
+","                                             return COMA;
+
+
 \"([^\"]+)\"                                    {yylval.cadenaVal = strdup(yytext);return CADENA;}
 
 imprimir|escribir|poner                         return IMPRIMIR;

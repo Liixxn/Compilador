@@ -37,7 +37,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 }
 
 /*Declaración de los TOKENS*/
-%token SUMA RESTA MULTIPLICACION DIVISION IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE IGUAL_IGUAL NO_IGUAL
+%token SUMA RESTA MULTIPLICACION DIVISION IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE IGUAL_IGUAL NO_IGUAL AND OR WHILE FIN_BUCLE DOSPUNTOS FOR_BUCLE FIN_FOR IN RANGE COMA IF_CONDICION ELSE_CONDICION FIN_CONDICION
 
 /*Declaración de los TOKENS que provienen de FLEX con su respectivo tipo*/
 %token <enteroVal> NUMERICO 
@@ -46,10 +46,10 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 %token <cadenaVal> CADENA
 
 /*Declaración de los TOKENS NO TERMINALES con su estructura*/
-%type <tr> sentencias sentencia tipos expresion asignacion imprimir  
+%type <tr> sentencias sentencia tipos expresion asignacion bucle_w bucle_f condicion_if imprimir  
 
 /*Declaración de la precedencia siendo menor la del primero y mayor la del último*/
-%left SUMA RESTA MULTIPLICACION DIVISION MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE
+%left SUMA RESTA MULTIPLICACION DIVISION MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE AND OR IGUAL_IGUAL NO_IGUAL
 
 
 %start codigo
@@ -88,7 +88,10 @@ sentencias:
 //D --> A | I 
 sentencia:   //Por defecto bison, asigna $1 a $$ por lo que no es obligatoria realizar la asignacion
     asignacion              
-    | imprimir       
+    | imprimir
+    | bucle_w
+    | bucle_f
+    | condicion_if        
 ;
 
 //-------------------------------------------------------- ASIGNACION --------------------------------------------------------
@@ -372,6 +375,41 @@ expresion:
             yyerror("*** ERROR en la operacion DISTINTO DE ***");
         }
     }
+        //AND
+    | expresion AND tipos {
+            
+            //AND de numerico > numerico
+            if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+                printf("> [OPERACION] - AND {numerico / numerico}\n");
+                $$.n = crearNodoNoTerminal($1.n, $3.n, 16);
+                $$.tipo = tipos[0]; $$.numerico = $1.numerico + $3.numerico;
+            }
+            //AND de numericoDecimal > numericoDecimal
+            else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+                printf("> [OPERACION] - AND {numericoDecimal / numericoDecimal}\n");
+                $$.n = crearNodoNoTerminal($1.n, $3.n, 16);
+                $$.tipo = tipos[1]; $$.numericoDecimal = $1.numericoDecimal && $3.numericoDecimal;
+            }
+
+        
+    }
+    //OR
+    | expresion OR tipos {
+            
+            //OR de numerico > numerico
+            if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
+                printf("> [OPERACION] - OR {numerico / numerico}\n");
+                $$.n = crearNodoNoTerminal($1.n, $3.n, 17);
+                $$.tipo = tipos[0]; 
+                $$.numerico = $1.numerico + $3.numerico;
+            }
+            //OR de numericoDecimal > numericoDecimal
+            else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
+                printf("> [OPERACION] - OR {numericoDecimal / numericoDecimal}\n");
+                $$.n = crearNodoNoTerminal($1.n, $3.n, 17);
+                $$.tipo = tipos[1]; $$.numericoDecimal = $1.numericoDecimal || $3.numericoDecimal;
+            }
+    }
     | tipos {$$ = $1;} //la produccion operacion puede ser tipos, un subnivel para realizar la jerarquia de operaciones
 ;
 
@@ -449,6 +487,46 @@ imprimir:
         $$.n = crearNodoNoTerminal($3.n, crearNodoVacio(), 4);        
     }
 ;
+
+
+//-----------------------------------------------  BUCLE WHILE ---------------------------------------------
+//Representa la estructura del bucle while en lenguaje latino
+//W --> while ( E ): S 'fin_bucle'
+bucle_w:
+    WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE {
+        printf("> [SENTENCIA] - Bucle While\n");
+        $$.n = crearNodoNoTerminal($3.n, $6.n, 21); // 21 es el numero del while
+    }
+
+;
+
+//-----------------------------------------------  BUCLE FOR ---------------------------------------------
+//Representa la estructura del bucle for en lenguaje PYTHON
+//F --> for E in range ( E ): S 'fin_bucle'
+bucle_f:
+    FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR {
+        printf("> [SENTENCIA] - Bucle For\n");
+        $$.n = crearNodoNoTerminal($6.n, $9.n, 22); // 22 es el numero del for
+    }
+
+;
+
+//-----------------------------------------------  CONDICION IF ---------------------------------------------
+//Representa la estructura de la condicion if en lenguaje latino
+//IF_CONDICION --> if ( E ): S else: S 'fin_conndicion'
+condicion_if:
+    IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias ELSE_CONDICION DOSPUNTOS sentencias FIN_CONDICION {
+        printf("> [SENTENCIA] - Condicion If\n");
+        if($3.numerico == 1){
+            $$.n = crearNodoNoTerminal($6.n, crearNodoVacio(), 7);
+        }else{
+            $$.n = crearNodoNoTerminal($9.n, crearNodoVacio(), 7);
+        }
+    }
+
+
+
+
 
 %% 
 
