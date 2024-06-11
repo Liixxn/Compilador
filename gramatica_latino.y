@@ -100,37 +100,38 @@ asignacion:
 
         //Para crear un nuevo simbolo de tipo numerico
         if(strcmp($3.tipo, tipos[0]) == 0){ //comprobacion si es numerico
-        printf("Asignado el valor %d a la variable\n",$3.numerico);
-        tabla[indice].nombre = $1; 
-        tabla[indice].tipo = tipos[0]; 
-        tabla[indice].numerico = $3.numerico;
-        tabla[indice].registro = $3.n->resultado;
-        
-        indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
-
-
+            printf("Asignado el valor %d a la variable\n",$3.numerico);
+            tabla[indice].nombre = $1; 
+            tabla[indice].tipo = tipos[0]; 
+            tabla[indice].numerico = $3.numerico;
+            tabla[indice].registro = $3.n->resultado;
+            
+            indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
         }
         //Para crear un nuevo simbolo de tipo numericoDecimal
         else if(strcmp($3.tipo, tipos[1]) == 0){ //comprobacion si es numericoDecimal
-        printf("Asignado el valor %d a la variable\n",$3.numericoDecimal);
-        tabla[indice].nombre = $1; 
-        tabla[indice].tipo = tipos[1]; 
-        tabla[indice].numericoDecimal = $3.numericoDecimal; 
-        tabla[indice].registro = $3.n->resultado;
+            printf("Asignado el valor %d a la variable\n",$3.numericoDecimal);
+            tabla[indice].nombre = $1; 
+            tabla[indice].tipo = tipos[1]; 
+            tabla[indice].numericoDecimal = $3.numericoDecimal; 
+            tabla[indice].registro = $3.n->resultado;
 
-        indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
-
+            indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
         }
         
         //Para crear un nuevo simbolo de tipo texto
         else if (strcmp($3.tipo, tipos[2]) == 0){ //comprobacion si es texto
-        printf("Asignado el valor %s a la variable\n",$3.texto);
-        tabla[indice].nombre = $1; 
-        tabla[indice].tipo = tipos[2];
-        tabla[indice].texto = $3.texto;
-        tabla[indice].registro = $3.n->resultado;
+            printf("Asignado el valor %s a la variable\n",$3.texto);
+            tabla[indice].nombre = $1; 
+            tabla[indice].tipo = tipos[2];
+            tabla[indice].texto = $3.texto;
+            tabla[indice].registro = $3.n->resultado;
 
-        indice++;
+            indice++;
+        }
+        // Control de errores
+        else{
+            yyerror("*** ERROR No es ninguno de los tipos definidos ***");
         }
         printf("Contenido de cadenaaa: %s\n", $3.tipo);
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
@@ -160,7 +161,11 @@ expresion:
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
-        }  
+        }
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion SUMA ***");
+        }
     }
     //RESTA
     | expresion RESTA tipos {
@@ -179,7 +184,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal - $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion RESTA ***");
+        }
     }
     //MULTIPLICACION
     | expresion MULTIPLICACION tipos {
@@ -198,7 +206,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal * $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion MULTIPLICACION ***");
+        }
     }
     //DIVISION
     | expresion DIVISION tipos {
@@ -220,7 +231,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal / $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion division ***");
+        }
     }
     //MAYOR_QUE
     | expresion MAYOR_QUE tipos {
@@ -239,7 +253,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal > $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion MAYOR QUE ***");
+        }
     }
     //MAYOR_IGUAL_QUE
     | expresion MAYOR_IGUAL_QUE tipos {
@@ -258,7 +275,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal >= $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion MAYOR O IGUAL QUE ***");
+        }
     }
     //MENOR_QUE
     | expresion MENOR_QUE tipos {
@@ -277,7 +297,9 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal < $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion MENOR QUE ***");}
     }
     //MENOR_IGUAL_QUE
     | expresion MENOR_IGUAL_QUE tipos {
@@ -296,7 +318,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal <= $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion MENOR O IGUAL QUE ***");
+        }
     }//IGUAL_IGUAL
     | expresion IGUAL_IGUAL tipos {
         
@@ -314,7 +339,10 @@ expresion:
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal == $3.numericoDecimal;
         }
-
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion IGUAL IGUAL ***");
+        }
     }//NO_IGUAL
     | expresion NO_IGUAL tipos {
         
@@ -338,6 +366,10 @@ expresion:
             $$.n = crearNodoNoTerminal($1.n, $3.n, 15);
             $$.tipo = tipos[2]; 
             $$.texto = $1.texto != $3.texto;
+        }
+        // Control de errores
+        else{
+            yyerror("*** ERROR en la operacion DISTINTO DE ***");
         }
     }
     | tipos {$$ = $1;} //la produccion operacion puede ser tipos, un subnivel para realizar la jerarquia de operaciones
@@ -429,7 +461,12 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+
+#define RED     "\x1b[31m"
+#define RESET   "\x1b[0m"
 //Metodo yyerror, generado por defecto
 void yyerror(const char* s) {
-    fprintf(stderr, "%s\n", s);
+    fprintf(stderr, "\n--------------------------------------------------------\n");
+    fprintf(stderr, "%s", s);
+    fprintf(stderr, "\n--------------------------------------------------------\n\n");
 }
