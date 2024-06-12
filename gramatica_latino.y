@@ -17,7 +17,16 @@ extern FILE* yyin;
 extern int num_linea; //Almacena el numero de linea durante la ejecucion
 extern tSimbolos tabla[256];
 extern int indice; //Se almacena el índice de la tabla de tSimbolos
-char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear el tipo que se detecta en flex al tipo del nodo
+char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool", "array"}; //Para parsear el tipo que se detecta en flex al tipo del nodo
+
+typedef struct array{
+    char* name;
+    int size;
+    int* valores;
+} array;
+
+array arrays[100]; // Store detected arrays
+int array_count = 0;
 
 %}
 
@@ -27,9 +36,11 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
   float realVal;
   char* stringVal;
   char* cadenaVal;
+  int* valores;
   struct atributos{
     int numerico;
     float numericoDecimal;
+    struct array *miarray;
     char* texto;
     char* tipo;             //Define el tipo que se esta usando
     struct ast *n;          //Para almacenar los nodos del AST
@@ -44,9 +55,11 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 %token <realVal> NUMERICODECIMAL 
 %token <stringVal> IDENTIFICADOR
 %token <cadenaVal> CADENA
+%token <enteroVal> NUM
 
 /*Declaración de los TOKENS NO TERMINALES con su estructura*/
-%type <tr> sentencias sentencia tipos expresion asignacion bucle_w bucle_f condicion_if elif_clauses else_clause imprimir  
+%type <tr> sentencias sentencia tipos expresion asignacion bucle_w bucle_f condicion_if elif_clauses else_clause imprimir
+%type <valores> elements  
 
 /*Declaración de la precedencia siendo menor la del primero y mayor la del último*/
 %left SUMA RESTA MULTIPLICACION DIVISION MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE AND OR IGUAL_IGUAL NO_IGUAL
@@ -70,6 +83,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 //X --> S
 codigo:
     sentencias  {
+        printf("$1: %d\n", $1.n->tipoNodo);
         comprobarAST($1.n); 
         printf("\n[FINALIZADO]\n");     
     }
@@ -132,6 +146,24 @@ asignacion:
 
             indice++;
         }
+        //Para crear un nuevo simbolo de tipo array
+        else if (strcmp($3.tipo, tipos[4]) == 0){ //comprobacion si es array
+            printf("Asignado el valoooor %d a la variable\n", $3.miarray->valores[1]);
+            printf("\nNombre de la variable gramatica_latino: %s\n", $1);
+            tabla[indice].nombre = $1; 
+            tabla[indice].tipo = tipos[4];
+            printf("Array DETEEEEECTED: of size %d\n", $3.miarray->valores);
+            tabla[indice].arrayNumerico = $3.miarray->valores;
+            tabla[indice].tamano = $3.miarray->size;
+
+
+            printf("\nEl registro que es donde esta guardado su dato es: %d\n", $3.n->resultado);
+            tabla[indice].registro = $3.n->resultado;
+
+            indice++;
+            printf("Array deeeeeeeeeeeeeeetected\n");
+        }
+
         // Control de errores
         else{
             yyerror("*** ERROR No es ninguno de los tipos definidos ***");
@@ -451,8 +483,66 @@ expresion:
                 $$.tipo = tipos[1]; $$.numericoDecimal = $1.numericoDecimal || $3.numericoDecimal;
             }
     }
+    // POSICION DEL ARRAY
+    | IDENTIFICADOR APERTURACORCHETE expresion CIERRECORCHETE {
+        printf("> [OPERACION] - GUARDAR POSICION DEL ARRAY \n");
+        printf("Nombre del aRRRRRy: %s\n", $1);
+        int pos = buscarTabla(indice, $1, tabla);
+        printf("Posicioooon encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
+        // int *arrayEncontrado = tabla[pos].arrayNumerico;
+        printf("POSICION DEL ARRAY ENCONTRADAAAAA: %d\n", tabla[pos].arrayNumerico[$3.numerico+1]);
+
+        $$.tipo = tipos[0];
+        $$.numerico = tabla[pos].arrayNumerico[$3.numerico+1];
+        $$.n = crearNodoTerminal($$.numerico, tipos[0]);
+    }
+
+
+    //PARA ARRAY
+    | APERTURACORCHETE elements CIERRECORCHETE {
+        printf("> [OPERACION] - CORCHETES - ARRAY \n");
+        arrays[array_count].valores = $2;
+        arrays[array_count].size = $2[0];
+
+        printf("Array detected: of size %d\n", $2[0]);
+        for (int i = 1; i <= $2[0]; i++) {
+            printf("%d ", $2[i]);
+        }
+        printf("\n");
+        $$.tipo = tipos[4];
+        $$.miarray = &arrays[array_count];
+        printf("TAMANO DEL ARRAY %d\n", $$.miarray->size);
+        printf("PASO EL TIPO 4 PaaaaaaaaaaaaaaaA arribaaaaaaa DEFINI ARRAY COMO PARTE DEL NODO\n");
+        $$.n = crearNodoTerminalArray($$.miarray->valores, tipos[4]);
+        array_count++;  // Incrementamos el contador de arrays
+        
+    }
+
     | tipos {$$ = $1;} //la produccion operacion puede ser tipos, un subnivel para realizar la jerarquia de operaciones
 ;
+
+
+
+elements:
+    /* Handle an array of numbers */
+    NUMERICO {
+        printf("NUMero unooooo: %d\n", $1);
+        int* array = malloc(2 * sizeof(int));
+        array[0] = 1;
+        array[1] = $1;
+        $$ = array;
+        printf("NUMero unooOOOOOOOOOOOOOOOOOOOOOOOooo: %d\n", $$[1]);
+    }
+    | elements COMA NUMERICO {
+        int* array = realloc($1, ($1[0] + 2) * sizeof(int));
+        array[0]++;
+        array[array[0]] = $3;
+        $$ = array;
+    }
+    ;
+
+
+
 
 //-----------------------------------------------  TIPOS  ---------------------------------------------
 /*PRODUCCION "tipos", en esta gramática se represetan los tipos de datos:
@@ -482,7 +572,12 @@ tipos:
             else if (tabla[pos].tipo==tipos[2]){
                 $$.tipo = tabla[pos].tipo; 
                 $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
-
+            }
+            //Para si es de tipo array
+            else if (tabla[pos].tipo==tipos[4]){
+                printf("Encuentra los ids de tipo array\n");
+                $$.tipo = tabla[pos].tipo;
+                $$.n = crearVariableTerminalArray(tabla[pos].arrayNumerico, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
             }
         }
     }

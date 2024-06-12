@@ -1,5 +1,17 @@
-texto = "Hola" + "amigos"
-print(texto)
-t1 = "Buenas"
-t2 = " tardes"
-print(t1 + t2)
+
+#todoloquepongaaquinodeberia hacer nadaaaaa
+"""
+suma = 3
+for i in range (2):
+    suma = suma - 1
+finFor
+suma = suma + 1
+print(suma)
+
+"""
+num = 5
+miarray = [9, 5, 8, 10, 5]
+print(num)
+numero = miarray[3]
+
+print(numero)

@@ -71,7 +71,8 @@
      NUMERICO = 288,
      NUMERICODECIMAL = 289,
      IDENTIFICADOR = 290,
-     CADENA = 291
+     CADENA = 291,
+     NUM = 292
    };
 #endif
 
@@ -82,15 +83,17 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 25 "gramatica_latino.y"
+#line 34 "gramatica_latino.y"
 
   int enteroVal;
   float realVal;
   char* stringVal;
   char* cadenaVal;
+  int* valores;
   struct atributos{
     int numerico;
     float numericoDecimal;
+    struct array *miarray;
     char* texto;
     char* tipo;             //Define el tipo que se esta usando
     struct ast *n;          //Para almacenar los nodos del AST
@@ -99,7 +102,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 103 "gramatica_latino.tab.h"
+#line 106 "gramatica_latino.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

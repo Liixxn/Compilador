@@ -1,20 +1,20 @@
 /* A Bison parser, made by GNU Bison 2.4.2.  */
 
 /* Skeleton implementation for Bison's Yacc-like parsers in C
-   
+
       Copyright (C) 1984, 1989-1990, 2000-2006, 2009-2010 Free Software
    Foundation, Inc.
-   
+
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
@@ -27,7 +27,7 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-   
+
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
@@ -87,12 +87,21 @@ extern FILE* yyin;
 extern int num_linea; //Almacena el numero de linea durante la ejecucion
 extern tSimbolos tabla[256];
 extern int indice; //Se almacena el índice de la tabla de tSimbolos
-char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear el tipo que se detecta en flex al tipo del nodo
+char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool", "array"}; //Para parsear el tipo que se detecta en flex al tipo del nodo
+
+typedef struct array{
+    char* name;
+    int size;
+    int* valores;
+} array;
+
+array arrays[100]; // Store detected arrays
+int array_count = 0;
 
 
 
 /* Line 189 of yacc.c  */
-#line 96 "gramatica_latino.tab.c"
+#line 105 "gramatica_latino.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -152,7 +161,8 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
      NUMERICO = 288,
      NUMERICODECIMAL = 289,
      IDENTIFICADOR = 290,
-     CADENA = 291
+     CADENA = 291,
+     NUM = 292
    };
 #endif
 
@@ -163,15 +173,17 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 25 "gramatica_latino.y"
+#line 34 "gramatica_latino.y"
 
   int enteroVal;
   float realVal;
   char* stringVal;
   char* cadenaVal;
+  int* valores;
   struct atributos{
     int numerico;
     float numericoDecimal;
+    struct array *miarray;
     char* texto;
     char* tipo;             //Define el tipo que se esta usando
     struct ast *n;          //Para almacenar los nodos del AST
@@ -180,7 +192,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 184 "gramatica_latino.tab.c"
+#line 196 "gramatica_latino.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -192,7 +204,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 196 "gramatica_latino.tab.c"
+#line 208 "gramatica_latino.tab.c"
 
 #ifdef short
 # undef short
@@ -407,20 +419,20 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  19
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   186
+#define YYLAST   214
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  37
+#define YYNTOKENS  38
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  13
+#define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  35
+#define YYNRULES  39
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  82
+#define YYNSTATES  92
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   291
+#define YYMAXUTOK   292
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -457,7 +469,7 @@ static const yytype_uint8 yytranslate[] =
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36
+      35,    36,    37
 };
 
 #if YYDEBUG
@@ -467,35 +479,37 @@ static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     7,    10,    12,    14,    16,    18,
       20,    24,    28,    32,    36,    40,    44,    48,    52,    56,
-      60,    64,    68,    72,    74,    76,    78,    80,    82,    87,
-      95,   106,   116,   117,   125,   129
+      60,    64,    68,    72,    77,    81,    83,    85,    89,    91,
+      93,    95,    97,   102,   110,   121,   131,   132,   140,   144
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      38,     0,    -1,    39,    -1,    40,    -1,    39,    40,    -1,
-      41,    -1,    44,    -1,    45,    -1,    46,    -1,    47,    -1,
-      35,     7,    42,    -1,    42,     3,    43,    -1,    42,     4,
-      43,    -1,    42,     5,    43,    -1,    42,     6,    43,    -1,
-      42,    13,    43,    -1,    42,    15,    43,    -1,    42,    14,
-      43,    -1,    42,    16,    43,    -1,    42,    17,    43,    -1,
-      42,    18,    43,    -1,    42,    19,    43,    -1,    42,    20,
-      43,    -1,    43,    -1,    35,    -1,    33,    -1,    34,    -1,
-      36,    -1,    12,     8,    42,     9,    -1,    21,     8,    42,
-       9,    23,    39,    22,    -1,    24,    35,    26,    27,     8,
-      42,     9,    23,    39,    25,    -1,    29,     8,    42,     9,
-      23,    39,    48,    49,    32,    -1,    -1,    48,    30,     8,
-      42,     9,    23,    39,    -1,    31,    23,    39,    -1,    -1
+      39,     0,    -1,    40,    -1,    41,    -1,    40,    41,    -1,
+      42,    -1,    46,    -1,    47,    -1,    48,    -1,    49,    -1,
+      35,     7,    43,    -1,    43,     3,    45,    -1,    43,     4,
+      45,    -1,    43,     5,    45,    -1,    43,     6,    45,    -1,
+      43,    13,    45,    -1,    43,    15,    45,    -1,    43,    14,
+      45,    -1,    43,    16,    45,    -1,    43,    17,    45,    -1,
+      43,    18,    45,    -1,    43,    19,    45,    -1,    43,    20,
+      45,    -1,    35,    10,    43,    11,    -1,    10,    44,    11,
+      -1,    45,    -1,    33,    -1,    44,    28,    33,    -1,    35,
+      -1,    33,    -1,    34,    -1,    36,    -1,    12,     8,    43,
+       9,    -1,    21,     8,    43,     9,    23,    40,    22,    -1,
+      24,    35,    26,    27,     8,    43,     9,    23,    40,    25,
+      -1,    29,     8,    43,     9,    23,    40,    50,    51,    32,
+      -1,    -1,    50,    30,     8,    43,     9,    23,    40,    -1,
+      31,    23,    40,    -1,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    72,    72,    81,    82,    90,    91,    92,    93,    94,
-     101,   154,   208,   231,   254,   277,   300,   323,   346,   368,
-     390,   420,   438,   454,   465,   491,   502,   512,   526,   538,
-     549,   560,   574,   577,   587,   590
+       0,    85,    85,    95,    96,   104,   105,   106,   107,   108,
+     115,   188,   223,   245,   267,   292,   314,   336,   357,   378,
+     399,   428,   446,   463,   478,   497,   504,   512,   531,   565,
+     576,   586,   600,   611,   622,   633,   647,   650,   661,   664
 };
 #endif
 
@@ -511,9 +525,9 @@ static const char *const yytname[] =
   "NO_IGUAL", "AND", "OR", "WHILE", "FIN_BUCLE", "DOSPUNTOS", "FOR_BUCLE",
   "FIN_FOR", "IN", "RANGE", "COMA", "IF_CONDICION", "ELIF_CONDICION",
   "ELSE_CONDICION", "FIN_CONDICION", "NUMERICO", "NUMERICODECIMAL",
-  "IDENTIFICADOR", "CADENA", "$accept", "codigo", "sentencias",
-  "sentencia", "asignacion", "expresion", "tipos", "imprimir", "bucle_w",
-  "bucle_f", "condicion_if", "elif_clauses", "else_clause", 0
+  "IDENTIFICADOR", "CADENA", "NUM", "$accept", "codigo", "sentencias",
+  "sentencia", "asignacion", "expresion", "elements", "tipos", "imprimir",
+  "bucle_w", "bucle_f", "condicion_if", "elif_clauses", "else_clause", 0
 };
 #endif
 
@@ -525,17 +539,17 @@ static const yytype_uint16 yytoknum[] =
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
-     285,   286,   287,   288,   289,   290,   291
+     285,   286,   287,   288,   289,   290,   291,   292
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    37,    38,    39,    39,    40,    40,    40,    40,    40,
-      41,    42,    42,    42,    42,    42,    42,    42,    42,    42,
-      42,    42,    42,    42,    43,    43,    43,    43,    44,    45,
-      46,    47,    48,    48,    49,    49
+       0,    38,    39,    40,    40,    41,    41,    41,    41,    41,
+      42,    43,    43,    43,    43,    43,    43,    43,    43,    43,
+      43,    43,    43,    43,    43,    43,    44,    44,    45,    45,
+      45,    45,    46,    47,    48,    49,    50,    50,    51,    51
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -543,8 +557,8 @@ static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     1,     2,     1,     1,     1,     1,     1,
        3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     1,     1,     1,     1,     1,     4,     7,
-      10,     9,     0,     7,     3,     0
+       3,     3,     3,     4,     3,     1,     1,     3,     1,     1,
+       1,     1,     4,     7,    10,     9,     0,     7,     3,     0
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -554,43 +568,45 @@ static const yytype_uint8 yydefact[] =
 {
        0,     0,     0,     0,     0,     0,     0,     2,     3,     5,
        6,     7,     8,     9,     0,     0,     0,     0,     0,     1,
-       4,    25,    26,    24,    27,     0,    23,     0,     0,     0,
-      10,     0,     0,     0,     0,    28,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    11,    12,    13,
-      14,    15,    17,    16,    18,    19,    20,    21,    22,     0,
-       0,     0,     0,     0,    32,    29,     0,    35,     0,     0,
-       0,     0,     0,     0,     0,    31,    30,     0,    34,     0,
-       0,    33
+       4,     0,    29,    30,    28,    31,     0,    25,     0,     0,
+       0,    10,    26,     0,     0,     0,     0,     0,     0,    32,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    24,     0,     0,    28,    11,    12,    13,    14,    15,
+      17,    16,    18,    19,    20,    21,    22,     0,     0,     0,
+      27,    23,     0,     0,    36,    33,     0,    39,     0,     0,
+       0,     0,     0,     0,     0,    35,    34,     0,    38,     0,
+       0,    37
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,     8,     9,    25,    26,    10,    11,    12,
-      13,    67,    71
+      -1,     6,     7,     8,     9,    26,    33,    27,    10,    11,
+      12,    13,    77,    81
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -52
+#define YYPACT_NINF -33
 static const yytype_int16 yypact[] =
 {
-      12,    -1,     5,   -20,     8,    13,    27,    12,   -52,   -52,
-     -52,   -52,   -52,   -52,     4,     4,     2,     4,     4,   -52,
-     -52,   -52,   -52,   -52,   -52,    63,   -52,    81,     3,    99,
-     153,     4,     4,     4,     4,   -52,     4,     4,     4,     4,
-       4,     4,     4,     4,    11,    23,    19,   -52,   -52,   -52,
-     -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,    12,
-       4,    12,   -10,   117,    12,   -52,    20,   -25,    12,    36,
-      22,    16,    -3,     4,    12,   -52,   -52,   135,    12,    26,
-      12,    12
+      24,    -3,     6,   -16,    14,    10,    31,    24,   -33,   -33,
+     -33,   -33,   -33,   -33,    -8,    -8,    13,    -8,    -8,   -33,
+     -33,    -1,   -33,   -33,    30,   -33,    73,   -33,    91,    15,
+     109,   181,   -33,    -4,    -8,   -25,   -25,   -25,   -25,   -33,
+     -25,   -25,   -25,   -25,   -25,   -25,   -25,   -25,    18,    35,
+      26,   -33,    17,   127,   -33,   -33,   -33,   -33,   -33,   -33,
+     -33,   -33,   -33,   -33,   -33,   -33,   -33,    24,    -8,    24,
+     -33,   -33,    -6,   145,    24,   -33,    28,   -18,    24,    39,
+      32,    25,     9,    -8,    24,   -33,   -33,   163,    24,    33,
+      24,    24
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-     -52,   -52,   -51,    -7,   -52,   -14,   143,   -52,   -52,   -52,
-     -52,   -52,   -52
+     -33,   -33,   -32,    -7,   -33,   -14,   -33,   167,   -33,   -33,
+     -33,   -33,   -33,   -33
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -600,63 +616,70 @@ static const yytype_int16 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      20,    27,     1,    29,    30,    69,    70,    14,    62,     1,
-      64,     2,    65,    15,     3,    16,    17,    72,     2,     4,
-      18,     3,    76,    78,     1,     5,     4,    19,    28,    81,
-      45,    60,     5,     2,    59,     0,     3,    21,    22,    23,
-      24,     4,    61,    68,    73,    74,    63,     5,    75,    80,
-       0,     0,     0,     0,     0,    20,     0,    20,     0,    77,
-       0,     0,     0,     0,     0,    20,    31,    32,    33,    34,
-       0,    20,    35,     0,    20,     0,    36,    37,    38,    39,
-      40,    41,    42,    43,    31,    32,    33,    34,     0,     0,
-      44,     0,     0,     0,    36,    37,    38,    39,    40,    41,
-      42,    43,    31,    32,    33,    34,     0,     0,    46,     0,
-       0,     0,    36,    37,    38,    39,    40,    41,    42,    43,
-      31,    32,    33,    34,     0,     0,    66,     0,     0,     0,
-      36,    37,    38,    39,    40,    41,    42,    43,    31,    32,
-      33,    34,     0,     0,    79,     0,     0,     0,    36,    37,
-      38,    39,    40,    41,    42,    43,    31,    32,    33,    34,
-       0,     0,     0,     0,     0,     0,    36,    37,    38,    39,
-      40,    41,    42,    43,    47,    48,    49,    50,     0,    51,
-      52,    53,    54,    55,    56,    57,    58
+      20,    28,    21,    30,    31,    14,     1,    51,    22,    23,
+      54,    25,    79,    80,    15,     2,    75,    18,     3,    16,
+      53,     1,    17,     4,    52,    22,    23,    24,    25,     5,
+       2,    19,    32,     3,    86,    72,     1,    74,     4,    29,
+      34,    67,    49,    68,     5,     2,    82,    83,     3,    69,
+      70,    78,    88,     4,    73,    84,    90,    85,    91,     5,
+       0,     0,     0,     0,     0,    20,     0,    20,     0,    87,
+       0,     0,     0,     0,     0,    20,    35,    36,    37,    38,
+       0,    20,    39,     0,    20,     0,    40,    41,    42,    43,
+      44,    45,    46,    47,    35,    36,    37,    38,     0,     0,
+      48,     0,     0,     0,    40,    41,    42,    43,    44,    45,
+      46,    47,    35,    36,    37,    38,     0,     0,    50,     0,
+       0,     0,    40,    41,    42,    43,    44,    45,    46,    47,
+      35,    36,    37,    38,     0,     0,     0,     0,    71,     0,
+      40,    41,    42,    43,    44,    45,    46,    47,    35,    36,
+      37,    38,     0,     0,    76,     0,     0,     0,    40,    41,
+      42,    43,    44,    45,    46,    47,    35,    36,    37,    38,
+       0,     0,    89,     0,     0,     0,    40,    41,    42,    43,
+      44,    45,    46,    47,    35,    36,    37,    38,     0,     0,
+       0,     0,     0,     0,    40,    41,    42,    43,    44,    45,
+      46,    47,    55,    56,    57,    58,     0,    59,    60,    61,
+      62,    63,    64,    65,    66
 };
 
 static const yytype_int8 yycheck[] =
 {
-       7,    15,    12,    17,    18,    30,    31,     8,    59,    12,
-      61,    21,    22,     8,    24,    35,     8,    68,    21,    29,
-       7,    24,    25,    74,    12,    35,    29,     0,    26,    80,
-      27,     8,    35,    21,    23,    -1,    24,    33,    34,    35,
-      36,    29,    23,    23,     8,    23,    60,    35,    32,    23,
-      -1,    -1,    -1,    -1,    -1,    62,    -1,    64,    -1,    73,
-      -1,    -1,    -1,    -1,    -1,    72,     3,     4,     5,     6,
-      -1,    78,     9,    -1,    81,    -1,    13,    14,    15,    16,
+       7,    15,    10,    17,    18,     8,    12,    11,    33,    34,
+      35,    36,    30,    31,     8,    21,    22,     7,    24,    35,
+      34,    12,     8,    29,    28,    33,    34,    35,    36,    35,
+      21,     0,    33,    24,    25,    67,    12,    69,    29,    26,
+      10,    23,    27,     8,    35,    21,    78,     8,    24,    23,
+      33,    23,    84,    29,    68,    23,    23,    32,    90,    35,
+      -1,    -1,    -1,    -1,    -1,    72,    -1,    74,    -1,    83,
+      -1,    -1,    -1,    -1,    -1,    82,     3,     4,     5,     6,
+      -1,    88,     9,    -1,    91,    -1,    13,    14,    15,    16,
       17,    18,    19,    20,     3,     4,     5,     6,    -1,    -1,
        9,    -1,    -1,    -1,    13,    14,    15,    16,    17,    18,
       19,    20,     3,     4,     5,     6,    -1,    -1,     9,    -1,
       -1,    -1,    13,    14,    15,    16,    17,    18,    19,    20,
-       3,     4,     5,     6,    -1,    -1,     9,    -1,    -1,    -1,
+       3,     4,     5,     6,    -1,    -1,    -1,    -1,    11,    -1,
       13,    14,    15,    16,    17,    18,    19,    20,     3,     4,
        5,     6,    -1,    -1,     9,    -1,    -1,    -1,    13,    14,
       15,    16,    17,    18,    19,    20,     3,     4,     5,     6,
-      -1,    -1,    -1,    -1,    -1,    -1,    13,    14,    15,    16,
-      17,    18,    19,    20,    31,    32,    33,    34,    -1,    36,
-      37,    38,    39,    40,    41,    42,    43
+      -1,    -1,     9,    -1,    -1,    -1,    13,    14,    15,    16,
+      17,    18,    19,    20,     3,     4,     5,     6,    -1,    -1,
+      -1,    -1,    -1,    -1,    13,    14,    15,    16,    17,    18,
+      19,    20,    35,    36,    37,    38,    -1,    40,    41,    42,
+      43,    44,    45,    46,    47
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    12,    21,    24,    29,    35,    38,    39,    40,    41,
-      44,    45,    46,    47,     8,     8,    35,     8,     7,     0,
-      40,    33,    34,    35,    36,    42,    43,    42,    26,    42,
-      42,     3,     4,     5,     6,     9,    13,    14,    15,    16,
-      17,    18,    19,    20,     9,    27,     9,    43,    43,    43,
-      43,    43,    43,    43,    43,    43,    43,    43,    43,    23,
-       8,    23,    39,    42,    39,    22,     9,    48,    23,    30,
-      31,    49,    39,     8,    23,    32,    25,    42,    39,     9,
-      23,    39
+       0,    12,    21,    24,    29,    35,    39,    40,    41,    42,
+      46,    47,    48,    49,     8,     8,    35,     8,     7,     0,
+      41,    10,    33,    34,    35,    36,    43,    45,    43,    26,
+      43,    43,    33,    44,    10,     3,     4,     5,     6,     9,
+      13,    14,    15,    16,    17,    18,    19,    20,     9,    27,
+       9,    11,    28,    43,    35,    45,    45,    45,    45,    45,
+      45,    45,    45,    45,    45,    45,    45,    23,     8,    23,
+      33,    11,    40,    43,    40,    22,     9,    50,    23,    30,
+      31,    51,    40,     8,    23,    32,    25,    43,    40,     9,
+      23,    40
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1479,10 +1502,11 @@ yyreduce:
         case 2:
 
 /* Line 1464 of yacc.c  */
-#line 72 "gramatica_latino.y"
+#line 85 "gramatica_latino.y"
     {
-        comprobarAST((yyvsp[(1) - (1)].tr).n); 
-        printf("\n[FINALIZADO]\n");     
+        printf("$1: %d\n", (yyvsp[(1) - (1)].tr).n->tipoNodo);
+        comprobarAST((yyvsp[(1) - (1)].tr).n);
+        printf("\n[FINALIZADO]\n");
     ;}
     break;
 
@@ -1496,7 +1520,7 @@ yyreduce:
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 82 "gramatica_latino.y"
+#line 96 "gramatica_latino.y"
     { //para hacerlo recursivo
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (2)].tr).n, (yyvsp[(2) - (2)].tr).n, 7);
     ;}
@@ -1505,47 +1529,65 @@ yyreduce:
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 101 "gramatica_latino.y"
+#line 115 "gramatica_latino.y"
     {
         printf("> [SENTENCIA] - Asignacion\n");
 
         //Para crear un nuevo simbolo de tipo numerico
         if(strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0){ //comprobacion si es numerico
             printf("Asignado el valor %d a la variable\n",(yyvsp[(3) - (3)].tr).numerico);
-            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal); 
-            tabla[indice].tipo = tipos[0]; 
+            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal);
+            tabla[indice].tipo = tipos[0];
             tabla[indice].numerico = (yyvsp[(3) - (3)].tr).numerico;
             tabla[indice].registro = (yyvsp[(3) - (3)].tr).n->resultado;
-            
+
             indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
         }
         //Para crear un nuevo simbolo de tipo numericoDecimal
         else if(strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){ //comprobacion si es numericoDecimal
             printf("Asignado el valor %d a la variable\n",(yyvsp[(3) - (3)].tr).numericoDecimal);
-            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal); 
-            tabla[indice].tipo = tipos[1]; 
-            tabla[indice].numericoDecimal = (yyvsp[(3) - (3)].tr).numericoDecimal; 
+            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal);
+            tabla[indice].tipo = tipos[1];
+            tabla[indice].numericoDecimal = (yyvsp[(3) - (3)].tr).numericoDecimal;
             tabla[indice].registro = (yyvsp[(3) - (3)].tr).n->resultado;
 
             indice++; //incrementamos el valor del inidice para pasar a la siguiente posicion y dejar la anterior guardada
         }
-        
+
         //Para crear un nuevo simbolo de tipo texto
         else if (strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[2]) == 0){ //comprobacion si es texto
             printf("Asignado el valor %s a la variable\n",(yyvsp[(3) - (3)].tr).texto);
-            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal); 
+            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal);
             tabla[indice].tipo = tipos[2];
             tabla[indice].texto = (yyvsp[(3) - (3)].tr).texto;
             tabla[indice].registro = (yyvsp[(3) - (3)].tr).n->resultado;
 
             indice++;
         }
+        //Para crear un nuevo simbolo de tipo array
+        else if (strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[4]) == 0){ //comprobacion si es array
+            printf("Asignado el valoooor %d a la variable\n", (yyvsp[(3) - (3)].tr).miarray->valores[1]);
+            printf("\nNombre de la variable gramatica_latino: %s\n", (yyvsp[(1) - (3)].stringVal));
+            tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal);
+            tabla[indice].tipo = tipos[4];
+            printf("Array DETEEEEECTED: of size %d\n", (yyvsp[(3) - (3)].tr).miarray->valores);
+            tabla[indice].arrayNumerico = (yyvsp[(3) - (3)].tr).miarray->valores;
+            tabla[indice].tamano = (yyvsp[(3) - (3)].tr).miarray->size;
+
+
+            printf("\nEl registro que es donde esta guardado su dato es: %d\n", (yyvsp[(3) - (3)].tr).n->resultado);
+            tabla[indice].registro = (yyvsp[(3) - (3)].tr).n->resultado;
+
+            indice++;
+            printf("Array deeeeeeeeeeeeeeetected\n");
+        }
+
         // Control de errores
         else{
             yyerror("*** ERROR No es ninguno de los tipos definidos ***");
             printf("Error en la linea %d\n", num_linea);
         }
-        
+
         (yyval.tr).n=crearNodoNoTerminal((yyvsp[(3) - (3)].tr).n, crearNodoVacio(), 5);
         printf("Numero linea asignacion %d\n", num_linea);
 
@@ -1555,14 +1597,14 @@ yyreduce:
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 154 "gramatica_latino.y"
+#line 188 "gramatica_latino.y"
     {
 
         //Suma de numerico + numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) { //comprobacion del tipo
             printf("> [OPERACION] - SUMA {numerico / numerico}\n");
-            (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 2); 
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 2);
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico + (yyvsp[(3) - (3)].tr).numerico;
             (yyval.tr).n->tipo = tipos[0];
         }
@@ -1586,7 +1628,7 @@ yyreduce:
             strcpy(cadenaUnificada, (yyvsp[(1) - (3)].tr).n->valorNodo.valorString);
             strcat(cadenaUnificada, "");
             strcat(cadenaUnificada, (yyvsp[(3) - (3)].tr).n->valorNodo.valorString);
-            
+
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 2);
             (yyval.tr).n->tipo = tipos[2];
             (yyval.tr).tipo = tipos[2];
@@ -1614,21 +1656,21 @@ yyreduce:
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 208 "gramatica_latino.y"
+#line 223 "gramatica_latino.y"
     {
-        
+
         //Resta de numerico - numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - RESTA {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 3);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico - (yyvsp[(3) - (3)].tr).numerico;
         }
         //Resta de numericoDecimal - numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - RESTA {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 3);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal - (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1642,21 +1684,21 @@ yyreduce:
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 231 "gramatica_latino.y"
+#line 245 "gramatica_latino.y"
     {
-        
+
         //Multiplicación de numerico * numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - MULTIPLICACION {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 9);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico * (yyvsp[(3) - (3)].tr).numerico;
         }
         //Multiplicación de numericoDecimal * numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - MULTIPLICACION {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 9);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal * (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1670,21 +1712,21 @@ yyreduce:
   case 14:
 
 /* Line 1464 of yacc.c  */
-#line 254 "gramatica_latino.y"
+#line 267 "gramatica_latino.y"
     {
-        
+
         //DIVISION de numerico * numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - DIVISION {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 8);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico / (yyvsp[(3) - (3)].tr).numerico;
         }
         //DIVISION de numericoDecimal * numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - DIVISION {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 8);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal / (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1698,21 +1740,21 @@ yyreduce:
   case 15:
 
 /* Line 1464 of yacc.c  */
-#line 277 "gramatica_latino.y"
+#line 292 "gramatica_latino.y"
     {
-        
+
         //MAYOR_QUE de numerico > numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - MAYOR_QUE {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 10);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico > (yyvsp[(3) - (3)].tr).numerico;
         }
         //MAYOR_QUE de numericoDecimal > numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - MAYOR_QUE {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 10);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal > (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1726,21 +1768,21 @@ yyreduce:
   case 16:
 
 /* Line 1464 of yacc.c  */
-#line 300 "gramatica_latino.y"
+#line 314 "gramatica_latino.y"
     {
-        
+
         //MAYOR_IGUAL_QUE de numerico > numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - MAYOR_IGUAL_QUE {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 11);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico >= (yyvsp[(3) - (3)].tr).numerico;
         }
         //MAYOR_IGUAL_QUE de numericoDecimal > numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - MAYOR_IGUAL_QUE {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 11);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal >= (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1754,21 +1796,21 @@ yyreduce:
   case 17:
 
 /* Line 1464 of yacc.c  */
-#line 323 "gramatica_latino.y"
+#line 336 "gramatica_latino.y"
     {
-        
+
         //MENOR_QUE de numerico > numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - MENOR_QUE {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 12);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico < (yyvsp[(3) - (3)].tr).numerico;
         }
         //MENOR_QUE de numericoDecimal > numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - MENOR_QUE {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 12);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal < (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1782,21 +1824,21 @@ yyreduce:
   case 18:
 
 /* Line 1464 of yacc.c  */
-#line 346 "gramatica_latino.y"
+#line 357 "gramatica_latino.y"
     {
-        
+
         //MENOR_IGUAL_QUE de numerico > numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - MENOR_IGUAL_QUE {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 13);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico <= (yyvsp[(3) - (3)].tr).numerico;
         }
         //MENOR_IGUAL_QUE de numericoDecimal > numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - MENOR_IGUAL_QUE {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 13);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal <= (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1810,21 +1852,21 @@ yyreduce:
   case 19:
 
 /* Line 1464 of yacc.c  */
-#line 368 "gramatica_latino.y"
+#line 378 "gramatica_latino.y"
     {
-        
+
         //IGUAL_IGUAL de numerico == numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - IGUAL_IGUAL {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 14);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico == (yyvsp[(3) - (3)].tr).numerico;
         }
         //IGUAL_IGUAL de numericoDecimal == numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - IGUAL_IGUAL {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 14);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal == (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         // Control de errores
@@ -1838,28 +1880,28 @@ yyreduce:
   case 20:
 
 /* Line 1464 of yacc.c  */
-#line 390 "gramatica_latino.y"
+#line 399 "gramatica_latino.y"
     {
-        
+
         //NO_IGUAL de numerico != numerico
         if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - NO_IGUAL {numerico / numerico}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 15);
-            (yyval.tr).tipo = tipos[0]; 
+            (yyval.tr).tipo = tipos[0];
             (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico != (yyvsp[(3) - (3)].tr).numerico;
         }
         //NO_IGUAL de numericoDecimal != numericoDecimal
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[1]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - NO_IGUAL {numericoDecimal / numericoDecimal}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 15);
-            (yyval.tr).tipo = tipos[1]; 
+            (yyval.tr).tipo = tipos[1];
             (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal != (yyvsp[(3) - (3)].tr).numericoDecimal;
         }
         //NO_IGUAL de string != string (texto)
         else if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[2]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[2]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - NO_IGUAL {texto / texto}\n");
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 15);
-            (yyval.tr).tipo = tipos[2]; 
+            (yyval.tr).tipo = tipos[2];
             (yyval.tr).texto = (yyvsp[(1) - (3)].tr).texto != (yyvsp[(3) - (3)].tr).texto;
         }
         // Control de errores
@@ -1873,9 +1915,9 @@ yyreduce:
   case 21:
 
 /* Line 1464 of yacc.c  */
-#line 420 "gramatica_latino.y"
+#line 428 "gramatica_latino.y"
     {
-            
+
             //AND de numerico > numerico
             if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
                 printf("> [OPERACION] - AND {numerico / numerico}\n");
@@ -1889,21 +1931,21 @@ yyreduce:
                 (yyval.tr).tipo = tipos[1]; (yyval.tr).numericoDecimal = (yyvsp[(1) - (3)].tr).numericoDecimal && (yyvsp[(3) - (3)].tr).numericoDecimal;
             }
 
-        
+
     ;}
     break;
 
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 438 "gramatica_latino.y"
+#line 446 "gramatica_latino.y"
     {
-            
+
             //OR de numerico > numerico
             if (strcmp((yyvsp[(1) - (3)].tr).tipo, tipos[0]) == 0 && strcmp((yyvsp[(3) - (3)].tr).tipo, tipos[0]) == 0) {  //comprobacion del tipo
                 printf("> [OPERACION] - OR {numerico / numerico}\n");
                 (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 17);
-                (yyval.tr).tipo = tipos[0]; 
+                (yyval.tr).tipo = tipos[0];
                 (yyval.tr).numerico = (yyvsp[(1) - (3)].tr).numerico || (yyvsp[(3) - (3)].tr).numerico;
             }
             //OR de numericoDecimal > numericoDecimal
@@ -1918,66 +1960,63 @@ yyreduce:
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 454 "gramatica_latino.y"
-    {(yyval.tr) = (yyvsp[(1) - (1)].tr);;}
+#line 463 "gramatica_latino.y"
+    {
+        printf("> [OPERACION] - GUARDAR POSICION DEL ARRAY \n");
+        printf("Nombre del aRRRRRy: %s\n", (yyvsp[(1) - (4)].stringVal));
+        int pos = buscarTabla(indice, (yyvsp[(1) - (4)].stringVal), tabla);
+        printf("Posicioooon encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
+        // int *arrayEncontrado = tabla[pos].arrayNumerico;
+        printf("POSICION DEL ARRAY ENCONTRADAAAAA: %d\n", tabla[pos].arrayNumerico[(yyvsp[(3) - (4)].tr).numerico+1]);
+
+        (yyval.tr).tipo = tipos[0];
+        (yyval.tr).numerico = tabla[pos].arrayNumerico[(yyvsp[(3) - (4)].tr).numerico+1];
+        (yyval.tr).n = crearNodoTerminal((yyval.tr).numerico, tipos[0]);
+    ;}
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 465 "gramatica_latino.y"
+#line 478 "gramatica_latino.y"
     {
-        printf(" IDENTIFICADOR %s\n",(yyvsp[(1) - (1)].stringVal));
-        //Buscamos en la tabla el identificador
-        if(buscarTabla(indice, (yyvsp[(1) - (1)].stringVal), tabla) != -1){     //En este IF entra si buscarTabla devuelve la posicion
-            int pos = buscarTabla(indice, (yyvsp[(1) - (1)].stringVal), tabla);
-            //Para si es de tipo numerico
-            if(tabla[pos].tipo==tipos[0]){
-                (yyval.tr).tipo = tabla[pos].tipo; 
-                (yyval.tr).numerico=tabla[pos].numerico; 
-                (yyval.tr).n = crearVariableTerminal(tabla[pos].numerico, tabla[pos].registro, tabla[pos].tipo);  //Creamos un nodo terminal con los numeros   
-            }
-            //Para si es de tipo numericoDecimal
-            else if(tabla[pos].tipo==tipos[1]){
-                (yyval.tr).tipo = tabla[pos].tipo; (yyval.tr).numericoDecimal=tabla[pos].numericoDecimal;
-                (yyval.tr).n = crearVariableTerminal(tabla[pos].numericoDecimal, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con los numeros        
-            }
-            //Para si es de tipo texto
-            else if (tabla[pos].tipo==tipos[2]){
-                (yyval.tr).tipo = tabla[pos].tipo; 
-                (yyval.tr).n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
+        printf("> [OPERACION] - CORCHETES - ARRAY \n");
+        arrays[array_count].valores = (yyvsp[(2) - (3)].valores);
+        arrays[array_count].size = (yyvsp[(2) - (3)].valores)[0];
 
-            }
+        printf("Array detected: of size %d\n", (yyvsp[(2) - (3)].valores)[0]);
+        for (int i = 1; i <= (yyvsp[(2) - (3)].valores)[0]; i++) {
+            printf("%d ", (yyvsp[(2) - (3)].valores)[i]);
         }
+        printf("\n");
+        (yyval.tr).tipo = tipos[4];
+        (yyval.tr).miarray = &arrays[array_count];
+        printf("TAMANO DEL ARRAY %d\n", (yyval.tr).miarray->size);
+        printf("PASO EL TIPO 4 PaaaaaaaaaaaaaaaA arribaaaaaaa DEFINI ARRAY COMO PARTE DEL NODO\n");
+        (yyval.tr).n = crearNodoTerminalArray((yyval.tr).miarray->valores, tipos[4]);
+        array_count++;  // Incrementamos el contador de arrays
+
     ;}
     break;
 
   case 25:
 
 /* Line 1464 of yacc.c  */
-#line 491 "gramatica_latino.y"
-    {
-        (yyval.tr).numerico = (yyvsp[(1) - (1)].enteroVal);
-        printf("\n> [TIPO] - Numerico Positivo: %d\n", (yyval.tr).numerico);
-        
-        (yyval.tr).tipo = tipos[0];
-
-        (yyval.tr).n = crearNodoTerminal((yyvsp[(1) - (1)].enteroVal), tipos[0]);
-        
-    ;}
+#line 497 "gramatica_latino.y"
+    {(yyval.tr) = (yyvsp[(1) - (1)].tr);;}
     break;
 
   case 26:
 
 /* Line 1464 of yacc.c  */
-#line 502 "gramatica_latino.y"
+#line 504 "gramatica_latino.y"
     {
-        (yyval.tr).numericoDecimal = (yyvsp[(1) - (1)].realVal);
-        printf("\n> [TIPO] - NumericoDecimal: %.3f\n", (yyval.tr).numericoDecimal); 
-
-        (yyval.tr).tipo = tipos[1];
-
-        (yyval.tr).n = crearNodoTerminal((yyvsp[(1) - (1)].realVal), tipos[1]); 
+        printf("NUMero unooooo: %d\n", (yyvsp[(1) - (1)].enteroVal));
+        int* array = malloc(2 * sizeof(int));
+        array[0] = 1;
+        array[1] = (yyvsp[(1) - (1)].enteroVal);
+        (yyval.valores) = array;
+        printf("NUMero unooOOOOOOOOOOOOOOOOOOOOOOOooo: %d\n", (yyval.valores)[1]);
     ;}
     break;
 
@@ -1985,6 +2024,82 @@ yyreduce:
 
 /* Line 1464 of yacc.c  */
 #line 512 "gramatica_latino.y"
+    {
+        int* array = realloc((yyvsp[(1) - (3)].valores), ((yyvsp[(1) - (3)].valores)[0] + 2) * sizeof(int));
+        array[0]++;
+        array[array[0]] = (yyvsp[(3) - (3)].enteroVal);
+        (yyval.valores) = array;
+    ;}
+    break;
+
+  case 28:
+
+/* Line 1464 of yacc.c  */
+#line 531 "gramatica_latino.y"
+    {
+        printf(" IDENTIFICADOR %s\n",(yyvsp[(1) - (1)].stringVal));
+        //Buscamos en la tabla el identificador
+        if(buscarTabla(indice, (yyvsp[(1) - (1)].stringVal), tabla) != -1){     //En este IF entra si buscarTabla devuelve la posicion
+            int pos = buscarTabla(indice, (yyvsp[(1) - (1)].stringVal), tabla);
+            //Para si es de tipo numerico
+            if(tabla[pos].tipo==tipos[0]){
+                (yyval.tr).tipo = tabla[pos].tipo;
+                (yyval.tr).numerico=tabla[pos].numerico;
+                (yyval.tr).n = crearVariableTerminal(tabla[pos].numerico, tabla[pos].registro, tabla[pos].tipo);  //Creamos un nodo terminal con los numeros
+            }
+            //Para si es de tipo numericoDecimal
+            else if(tabla[pos].tipo==tipos[1]){
+                (yyval.tr).tipo = tabla[pos].tipo; (yyval.tr).numericoDecimal=tabla[pos].numericoDecimal;
+                (yyval.tr).n = crearVariableTerminal(tabla[pos].numericoDecimal, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con los numeros
+            }
+            //Para si es de tipo texto
+            else if (tabla[pos].tipo==tipos[2]){
+                (yyval.tr).tipo = tabla[pos].tipo;
+                (yyval.tr).n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
+            }
+            //Para si es de tipo array
+            else if (tabla[pos].tipo==tipos[4]){
+                printf("Encuentra los ids de tipo array\n");
+                (yyval.tr).tipo = tabla[pos].tipo;
+                (yyval.tr).n = crearVariableTerminalArray(tabla[pos].arrayNumerico, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
+            }
+        }
+    ;}
+    break;
+
+  case 29:
+
+/* Line 1464 of yacc.c  */
+#line 565 "gramatica_latino.y"
+    {
+        (yyval.tr).numerico = (yyvsp[(1) - (1)].enteroVal);
+        printf("\n> [TIPO] - Numerico Positivo: %d\n", (yyval.tr).numerico);
+
+        (yyval.tr).tipo = tipos[0];
+
+        (yyval.tr).n = crearNodoTerminal((yyvsp[(1) - (1)].enteroVal), tipos[0]);
+
+    ;}
+    break;
+
+  case 30:
+
+/* Line 1464 of yacc.c  */
+#line 576 "gramatica_latino.y"
+    {
+        (yyval.tr).numericoDecimal = (yyvsp[(1) - (1)].realVal);
+        printf("\n> [TIPO] - NumericoDecimal: %.3f\n", (yyval.tr).numericoDecimal);
+
+        (yyval.tr).tipo = tipos[1];
+
+        (yyval.tr).n = crearNodoTerminal((yyvsp[(1) - (1)].realVal), tipos[1]);
+    ;}
+    break;
+
+  case 31:
+
+/* Line 1464 of yacc.c  */
+#line 586 "gramatica_latino.y"
     {
         (yyval.tr).texto = (yyvsp[(1) - (1)].cadenaVal);
         printf("\n> [TIPO] - Cadena de texto: %s\n", (yyvsp[(1) - (1)].cadenaVal));
@@ -1995,41 +2110,41 @@ yyreduce:
     ;}
     break;
 
-  case 28:
+  case 32:
 
 /* Line 1464 of yacc.c  */
-#line 526 "gramatica_latino.y"
-    { 
+#line 600 "gramatica_latino.y"
+    {
         printf("> [SENTENCIA] - Imprimir\n");
-        (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (4)].tr).n, crearNodoVacio(), 4);        
+        (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (4)].tr).n, crearNodoVacio(), 4);
         printf("Numero linea imprimir %d\n", num_linea);
     ;}
     break;
 
-  case 29:
+  case 33:
 
 /* Line 1464 of yacc.c  */
-#line 538 "gramatica_latino.y"
+#line 611 "gramatica_latino.y"
     {
         printf("> [SENTENCIA] - Bucle While\n");
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (7)].tr).n, (yyvsp[(6) - (7)].tr).n, 21); // 21 es el numero del while
     ;}
     break;
 
-  case 30:
+  case 34:
 
 /* Line 1464 of yacc.c  */
-#line 549 "gramatica_latino.y"
+#line 622 "gramatica_latino.y"
     {
         printf("> [SENTENCIA] - Bucle For\n");
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(6) - (10)].tr).n, (yyvsp[(9) - (10)].tr).n, 22); // 22 es el numero del for
     ;}
     break;
 
-  case 31:
+  case 35:
 
 /* Line 1464 of yacc.c  */
-#line 560 "gramatica_latino.y"
+#line 633 "gramatica_latino.y"
     {
         printf("> [SENTENCIA] - Condicion If\n");
         printf("El resultado es: %d\n", (yyvsp[(3) - (9)].tr).numerico);
@@ -2043,19 +2158,19 @@ yyreduce:
     ;}
     break;
 
-  case 32:
+  case 36:
 
 /* Line 1464 of yacc.c  */
-#line 574 "gramatica_latino.y"
+#line 647 "gramatica_latino.y"
     {
         (yyval.tr).numerico = 0;
     ;}
     break;
 
-  case 33:
+  case 37:
 
 /* Line 1464 of yacc.c  */
-#line 577 "gramatica_latino.y"
+#line 650 "gramatica_latino.y"
     {
         printf("> [SENTENCIA] - Condicion Elif\n");
         if((yyvsp[(4) - (7)].tr).numerico == 1){
@@ -2065,19 +2180,19 @@ yyreduce:
     ;}
     break;
 
-  case 34:
+  case 38:
 
 /* Line 1464 of yacc.c  */
-#line 587 "gramatica_latino.y"
+#line 661 "gramatica_latino.y"
     {
         (yyval.tr).n = (yyvsp[(3) - (3)].tr).n;
     ;}
     break;
 
-  case 35:
+  case 39:
 
 /* Line 1464 of yacc.c  */
-#line 590 "gramatica_latino.y"
+#line 664 "gramatica_latino.y"
     {
         (yyval.tr).n = crearNodoVacio();
     ;}
@@ -2086,7 +2201,7 @@ yyreduce:
 
 
 /* Line 1464 of yacc.c  */
-#line 2090 "gramatica_latino.tab.c"
+#line 2177 "gramatica_latino.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2298,8 +2413,8 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 599 "gramatica_latino.y"
- 
+#line 673 "gramatica_latino.y"
+
 
 //--------------------------------------------------- METODO MAIN -----------------------------------------------
 int main(int argc, char** argv) {
