@@ -45,31 +45,33 @@
      IGUAL = 262,
      APERTURAPARENTESIS = 263,
      CIERREPARENTESIS = 264,
-     IMPRIMIR = 265,
-     MAYOR_QUE = 266,
-     MENOR_QUE = 267,
-     MAYOR_IGUAL_QUE = 268,
-     MENOR_IGUAL_QUE = 269,
-     IGUAL_IGUAL = 270,
-     NO_IGUAL = 271,
-     AND = 272,
-     OR = 273,
-     WHILE = 274,
-     FIN_BUCLE = 275,
-     DOSPUNTOS = 276,
-     FOR_BUCLE = 277,
-     FIN_FOR = 278,
-     IN = 279,
-     RANGE = 280,
-     COMA = 281,
-     IF_CONDICION = 282,
-     ELIF_CONDICION = 283,
-     ELSE_CONDICION = 284,
-     FIN_CONDICION = 285,
-     NUMERICO = 286,
-     NUMERICODECIMAL = 287,
-     IDENTIFICADOR = 288,
-     CADENA = 289
+     APERTURACORCHETE = 265,
+     CIERRECORCHETE = 266,
+     IMPRIMIR = 267,
+     MAYOR_QUE = 268,
+     MENOR_QUE = 269,
+     MAYOR_IGUAL_QUE = 270,
+     MENOR_IGUAL_QUE = 271,
+     IGUAL_IGUAL = 272,
+     NO_IGUAL = 273,
+     AND = 274,
+     OR = 275,
+     WHILE = 276,
+     FIN_BUCLE = 277,
+     DOSPUNTOS = 278,
+     FOR_BUCLE = 279,
+     FIN_FOR = 280,
+     IN = 281,
+     RANGE = 282,
+     COMA = 283,
+     IF_CONDICION = 284,
+     ELIF_CONDICION = 285,
+     ELSE_CONDICION = 286,
+     FIN_CONDICION = 287,
+     NUMERICO = 288,
+     NUMERICODECIMAL = 289,
+     IDENTIFICADOR = 290,
+     CADENA = 291
    };
 #endif
 
@@ -97,7 +99,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 101 "gramatica_latino.tab.h"
+#line 103 "gramatica_latino.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

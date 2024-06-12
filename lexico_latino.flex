@@ -16,6 +16,8 @@ int num_linea = 1;
 "*"                                             return MULTIPLICACION;
 "("	                                            return APERTURAPARENTESIS;
 ")"	                                            return CIERREPARENTESIS;
+"["	                                            return APERTURACORCHETE;
+"]"	                                            return CIERRECORCHETE;
 
 ">="                                            return MAYOR_IGUAL_QUE;
 "<="                                            return MENOR_IGUAL_QUE;
@@ -41,7 +43,8 @@ int num_linea = 1;
 "finIf"                                         return FIN_CONDICION;
 ","                                             return COMA;
 
-
+"#"(.)*                                         
+\"\"\"([^\"]|\"[^\"])*\"\"\"
 \"[^\"\n]*\"                                    {yylval.stringVal = strdup(yytext + 1); yylval.stringVal[strlen(yylval.stringVal) - 1] = '\0'; printf(yytext);return CADENA;}
 
 print                                           return IMPRIMIR;

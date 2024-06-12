@@ -1,6 +1,6 @@
-          
+
 #-------------- Declaracion de variables --------------
-.data 
+.data
 saltoLinea: .asciiz "\n"
 zero: .float 0.0
 uno: .float 1.0
