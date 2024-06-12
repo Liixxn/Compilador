@@ -138,11 +138,20 @@ asignacion:
         else{
             yyerror("*** ERROR No es ninguno de los tipos definidos ***");
         }
+
+
+
         printf("\n------------ANTES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
+        printf("parte izq latino %s\n", $3.tipo);
+        
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
-        printf("\nNodo creado despues: %d y registro %d\n", $$.n->nombreVar, $$.n->resultado);
+        printf("\nNodo creado despues: Nombre: var_%d y Registro: %d\n", $$.n->nombreVar, $$.n->resultado);
+        //printf("\nValor del nodo: %s\n", $$.n->valorNodo.valorString);
 
         printf("\n------------DESPUES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
+
+        
+
     }
 ;
 
@@ -160,26 +169,49 @@ expresion:
             printf("> [OPERACION] - SUMA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2); 
             $$.tipo = tipos[0]; 
-            $$.numerico = $1.numerico + $3.numerico;  
+            printf("Tipo del nodo numerico fa: %s\n", $$.tipo);
+            $$.numerico = $1.numerico + $3.numerico;
+            $$.n->tipo = tipos[0];
+            printf("Nodo final thtr %s\n", $$.n->izq->tipo);
         }
 
         //Suma de numericoDecimal + numericoDecimal
         else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
             printf("> [OPERACION] - SUMA {numericoDecimal / numericoDecimal}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
-            $$.tipo = tipos[1]; 
+            $$.tipo = tipos[1];
+            $$.n->tipo = tipos[1];
             $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
         }
 
         //Suma de texto + texto
         else if (strcmp($1.tipo, tipos[2]) == 0 && strcmp($3.tipo, tipos[2]) == 0) {  //comprobacion del tipo
             printf("> [OPERACION] - CONCATENACION {texto / texto}\n");
+
+
+            char *cadenaUnificada = malloc(strlen($1.n->valorNodo.valorString) + strlen($3.n->valorNodo.valorString) + 2);
+
+            strcpy(cadenaUnificada, $1.n->valorNodo.valorString);
+            strcat(cadenaUnificada, "");
+            strcat(cadenaUnificada, $3.n->valorNodo.valorString);
+            
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
+            $$.n->tipo = tipos[2];
             $$.tipo = tipos[2];
-            printf("cadea 1: %s\n", $1.n->valorNodo.valorString);
-            printf("cadea 2: %s\n", $3.n->valorNodo.valorString);
-            $$.texto = strcat($1.n->valorNodo.valorString, $3.n->valorNodo.valorString);
-            printf("Cadena unificadaaa: %s\n", $$.texto);
+
+            variables[$$.n->resultado].texto = cadenaUnificada;
+            variables[$$.n->resultado].nombre = $$.n->nombreVar;
+            variables[$$.n->resultado].registro = $$.n->resultado;
+            variables[$$.n->resultado].disponible = true;
+
+            
+            
+
+            printf("\nREGISTRO ENCONTRADO PARA LA CADENA UNIFICADA %d\n", $$.n->resultado);
+
+            // for (int i = 0; i < 64; i++){
+            //     printf("\nValor de las variable en la posicion %d: %s\n", i, variables[i].texto);
+            // }
 
         }
         // Control de errores
@@ -399,7 +431,7 @@ expresion:
             if (strcmp($1.tipo, tipos[0]) == 0 && strcmp($3.tipo, tipos[0]) == 0) {  //comprobacion del tipo
                 printf("> [OPERACION] - AND {numerico / numerico}\n");
                 $$.n = crearNodoNoTerminal($1.n, $3.n, 16);
-                $$.tipo = tipos[0]; $$.numerico = $1.numerico + $3.numerico;
+                $$.tipo = tipos[0]; $$.numerico = $1.numerico && $3.numerico;
             }
             //AND de numericoDecimal > numericoDecimal
             else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
@@ -418,7 +450,7 @@ expresion:
                 printf("> [OPERACION] - OR {numerico / numerico}\n");
                 $$.n = crearNodoNoTerminal($1.n, $3.n, 17);
                 $$.tipo = tipos[0]; 
-                $$.numerico = $1.numerico + $3.numerico;
+                $$.numerico = $1.numerico || $3.numerico;
             }
             //OR de numericoDecimal > numericoDecimal
             else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
@@ -441,10 +473,8 @@ tipos:
     IDENTIFICADOR {
         printf(" IDENTIFICADOR %s\n",$1);
         //Buscamos en la tabla el identificador
-        printf("Identificador a buscar: %s\n", $1);
         if(buscarTabla(indice, $1, tabla) != -1){     //En este IF entra si buscarTabla devuelve la posicion
             int pos = buscarTabla(indice, $1, tabla);
-            printf("Posicion encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
             //Para si es de tipo numerico
             if(tabla[pos].tipo==tipos[0]){
                 $$.tipo = tabla[pos].tipo; 
@@ -458,7 +488,12 @@ tipos:
             }
             //Para si es de tipo texto
             else if (tabla[pos].tipo==tipos[2]){
-                printf("Encuentra los ids de tipo texto\n");
+                printf("\n----------Informacion del id guardado en la tabla de simbolos----------\n");
+                printf("Nombre: %s\n", tabla[pos].nombre);
+                printf("Texto: %s\n", tabla[pos].texto);
+                printf("Registro: %d\n", tabla[pos].registro);
+                printf("Tipo: %s\n", tabla[pos].tipo);
+                printf("\n----------Fin de la informacion del id guardado en la tabla de simbolos----------\n");
                 $$.tipo = tabla[pos].tipo; 
                 $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
 
@@ -474,6 +509,7 @@ tipos:
         $$.tipo = tipos[0];
 
         $$.n = crearNodoTerminal($1, tipos[0]);
+        printf("TIPO EN TIPOS %s\n", $$.n->tipo);
         
     }
 
@@ -494,7 +530,8 @@ tipos:
 
         $$.tipo = tipos[2];
 
-        $$.n = crearNodoTerminalString($1, tipos[2]); 
+        $$.n = crearNodoTerminalString($1, tipos[2]);
+
     }
 ;
 
