@@ -86,12 +86,16 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
   }  else if (n->tipoNodo == 2) {
     dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor + comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
     fprintf(yyout, "add.s $f%d, $f%d, $f%d\n", n->resultado, n->izq->resultado, n->dcha->resultado); //se utiliza add.s para + en ASM
+    fprintf(yyout, "mov.s $f%d, $f%d\n", n->izq->resultado, n->resultado);
+    printf("SUMA MOVIENDOSE PARA INCREMENTO");
     borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
 
   //TIPO NODO 4 - Nueva resta
   } else if (n->tipoNodo == 3) {
     dato.valor = comprobarValorNodo(n->izq, contadorEtiquetaLocal).valor - comprobarValorNodo(n->dcha, contadorEtiquetaLocal).valor;
     fprintf(yyout, "sub.s $f%d, $f%d, $f%d\n", n->resultado, n->izq->resultado, n->dcha->resultado); //se utiliza sub.s para - en ASM
+    fprintf(yyout, "mov.s $f%d, $f%d\n", n->izq->resultado, n->resultado);
+    printf("RESTA MOVIENDOSE PARA INCREMENTO");
     borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
   
   //TIPO NODO 18 - Nuevo imprimir
@@ -314,14 +318,15 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
     fprintf(yyout, "c.lt.s $f%d, $f%d\n", 29, n->izq->resultado);
     fprintf(yyout, "  bc1f fin_bucle%d\n", etiqueta); //Si es 0, salimos del bucle
     fprintf(yyout, "    nop\n");
-    comprobarValorNodo(n->dcha, contadorEtiquetaLocal); //Comprobamos el valor del nodo derecho
+    
+    comprobarValorNodo(n->dcha, 7); //Comprobamos el valor del nodo derecho
     // Incremento el valor de f29 en 1
     
     fprintf(yyout,"l.s $f30, uno\n");
     fprintf(yyout, "add.s $f29, $f29, $f30\n");
     fprintf(yyout, "j etiqueta%d\n", etiqueta); //Volvemos a la etiqueta
     fprintf(yyout, "fin_bucle%d:\n", etiqueta);   //Etiqueta de fin de bucle
-
+    fprintf(yyout,"l.s $f29, zero\n"); //cargar esto al final de zero nuevamente
     borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
 
     
