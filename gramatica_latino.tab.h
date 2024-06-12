@@ -63,12 +63,13 @@
      RANGE = 280,
      COMA = 281,
      IF_CONDICION = 282,
-     ELSE_CONDICION = 283,
-     FIN_CONDICION = 284,
-     NUMERICO = 285,
-     NUMERICODECIMAL = 286,
-     IDENTIFICADOR = 287,
-     CADENA = 288
+     ELIF_CONDICION = 283,
+     ELSE_CONDICION = 284,
+     FIN_CONDICION = 285,
+     NUMERICO = 286,
+     NUMERICODECIMAL = 287,
+     IDENTIFICADOR = 288,
+     CADENA = 289
    };
 #endif
 
@@ -96,7 +97,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 100 "gramatica_latino.tab.h"
+#line 101 "gramatica_latino.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

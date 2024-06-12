@@ -37,7 +37,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 }
 
 /*Declaración de los TOKENS*/
-%token SUMA RESTA MULTIPLICACION DIVISION IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE IGUAL_IGUAL NO_IGUAL AND OR WHILE FIN_BUCLE DOSPUNTOS FOR_BUCLE FIN_FOR IN RANGE COMA IF_CONDICION ELSE_CONDICION FIN_CONDICION
+%token SUMA RESTA MULTIPLICACION DIVISION IGUAL APERTURAPARENTESIS CIERREPARENTESIS IMPRIMIR MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE IGUAL_IGUAL NO_IGUAL AND OR WHILE FIN_BUCLE DOSPUNTOS FOR_BUCLE FIN_FOR IN RANGE COMA IF_CONDICION ELIF_CONDICION ELSE_CONDICION FIN_CONDICION
 
 /*Declaración de los TOKENS que provienen de FLEX con su respectivo tipo*/
 %token <enteroVal> NUMERICO 
@@ -46,7 +46,7 @@ char* tipos[] = {"numerico", "numericoDecimal", "texto", "bool"}; //Para parsear
 %token <cadenaVal> CADENA
 
 /*Declaración de los TOKENS NO TERMINALES con su estructura*/
-%type <tr> sentencias sentencia tipos expresion asignacion bucle_w bucle_f condicion_if imprimir  
+%type <tr> sentencias sentencia tipos expresion asignacion bucle_w bucle_f condicion_if elif_clauses else_clause imprimir  
 
 /*Declaración de la precedencia siendo menor la del primero y mayor la del último*/
 %left SUMA RESTA MULTIPLICACION DIVISION MAYOR_QUE MENOR_QUE MAYOR_IGUAL_QUE MENOR_IGUAL_QUE AND OR IGUAL_IGUAL NO_IGUAL
@@ -125,9 +125,11 @@ asignacion:
         //Para crear un nuevo simbolo de tipo texto
         else if (strcmp($3.tipo, tipos[2]) == 0){ //comprobacion si es texto
             printf("Asignado el valor %s a la variable\n",$3.texto);
+            printf("\nNombre de la variable gramatica_latino: %s\n", $1);
             tabla[indice].nombre = $1; 
             tabla[indice].tipo = tipos[2];
             tabla[indice].texto = $3.texto;
+            printf("\nEl registro que es donde esta guardado su dato es: %d\n", $3.n->resultado);
             tabla[indice].registro = $3.n->resultado;
 
             indice++;
@@ -136,8 +138,11 @@ asignacion:
         else{
             yyerror("*** ERROR No es ninguno de los tipos definidos ***");
         }
-        printf("Contenido de cadenaaa: %s\n", $3.tipo);
+        printf("\n------------ANTES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
+        printf("\nNodo creado despues: %d y registro %d\n", $$.n->nombreVar, $$.n->resultado);
+
+        printf("\n------------DESPUES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
     }
 ;
 
@@ -164,6 +169,18 @@ expresion:
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
             $$.tipo = tipos[1]; 
             $$.numericoDecimal = $1.numericoDecimal + $3.numericoDecimal;
+        }
+
+        //Suma de texto + texto
+        else if (strcmp($1.tipo, tipos[2]) == 0 && strcmp($3.tipo, tipos[2]) == 0) {  //comprobacion del tipo
+            printf("> [OPERACION] - CONCATENACION {texto / texto}\n");
+            $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
+            $$.tipo = tipos[2];
+            printf("cadea 1: %s\n", $1.n->valorNodo.valorString);
+            printf("cadea 2: %s\n", $3.n->valorNodo.valorString);
+            $$.texto = strcat($1.n->valorNodo.valorString, $3.n->valorNodo.valorString);
+            printf("Cadena unificadaaa: %s\n", $$.texto);
+
         }
         // Control de errores
         else{
@@ -424,8 +441,10 @@ tipos:
     IDENTIFICADOR {
         printf(" IDENTIFICADOR %s\n",$1);
         //Buscamos en la tabla el identificador
+        printf("Identificador a buscar: %s\n", $1);
         if(buscarTabla(indice, $1, tabla) != -1){     //En este IF entra si buscarTabla devuelve la posicion
             int pos = buscarTabla(indice, $1, tabla);
+            printf("Posicion encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
             //Para si es de tipo numerico
             if(tabla[pos].tipo==tipos[0]){
                 $$.tipo = tabla[pos].tipo; 
@@ -439,6 +458,7 @@ tipos:
             }
             //Para si es de tipo texto
             else if (tabla[pos].tipo==tipos[2]){
+                printf("Encuentra los ids de tipo texto\n");
                 $$.tipo = tabla[pos].tipo; 
                 $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
 
@@ -515,14 +535,41 @@ bucle_f:
 //Representa la estructura de la condicion if en lenguaje latino
 //IF_CONDICION --> if ( E ): S else: S 'fin_conndicion'
 condicion_if:
-    IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias ELSE_CONDICION DOSPUNTOS sentencias FIN_CONDICION {
+    IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION {
         printf("> [SENTENCIA] - Condicion If\n");
+        printf("El resultado es: %d\n", $3.numerico);
         if($3.numerico == 1){
-            $$.n = crearNodoNoTerminal($6.n, crearNodoVacio(), 7);
-        }else{
-            $$.n = crearNodoNoTerminal($9.n, crearNodoVacio(), 7);
+            $$.n = crearNodoNoTerminal($6.n, crearNodoVacio(), 7); // 7 is the number for if
+        } else if ($7.numerico == 1) {
+            $$.n = crearNodoNoTerminal($7.n, crearNodoVacio(), 7); // 7 is the number for elif
+        } else {
+            $$.n = crearNodoNoTerminal($8.n, crearNodoVacio(), 7); // 7 is the number for else
         }
     }
+    ;
+
+elif_clauses:
+    /* empty */ {
+        $$.numerico = 0;
+    }
+    | elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias {
+        printf("> [SENTENCIA] - Condicion Elif\n");
+        printf("El resultado es: %d\n", $4.numerico);
+        if($4.numerico == 1){
+            $$.numerico = 1;
+            $$.n = crearNodoNoTerminal($7.n, crearNodoVacio(), 7); // 7 is the number for elif
+        }
+    }
+    ;
+
+else_clause:
+    ELSE_CONDICION DOSPUNTOS sentencias {
+        $$.n = $3.n;
+    }
+    | /* empty */ {
+        $$.n = crearNodoVacio();
+    }
+    ;
 
 
 

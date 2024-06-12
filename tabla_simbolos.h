@@ -24,13 +24,13 @@ int buscarTabla(int indice, char *nombre, tSimbolos tabla[]) {
     int resultado = -1; //En el caso de no encontrar el simbolo devolvemos -1
     int posicion = 0;
     while (posicion < indice) {
-        
+        //printf("\nVariable que esta guardadada en la posicion %d: %s\n", posicion, tabla[posicion].nombre); //Imprime la variable guardada en la posicion
         //Compara si el simbolo esta contenido en la tabla, mirando solo los ocupados
         if (strcmp(tabla[posicion].nombre, nombre) == 0) {
             resultado = posicion;
+            printf("[tSimbolos] Posicion encontrada que se pasa a resultadoooo: %d\n", resultado); //Imprime la posicion encontrada
         }
         posicion++;
     }
-    printf("[tSimbolos] Primera posicion libre: %d\n", posicion); //Imprime la posicion libre
     return resultado;
 }

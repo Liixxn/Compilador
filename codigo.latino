@@ -1,6 +1,15 @@
 
+suma = 1
 
-suma = 3 + 3
-for i in range (5):
-imprimir(8)
-finFor
+if (suma == 3):
+print(2)
+elif (suma == 2):
+print(4)
+elif (suma == 1):
+print(400)
+suma = suma + 1
+else:
+print(8)
+finIf
+
+print(suma)

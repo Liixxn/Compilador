@@ -36,14 +36,15 @@ int num_linea = 1;
 "in"                                            return IN;
 "range"                                         return RANGE;
 "if"                                            return IF_CONDICION;
+"elif"                                          return ELIF_CONDICION;
 "else"                                          return ELSE_CONDICION;
 "finIf"                                         return FIN_CONDICION;
 ","                                             return COMA;
 
 
-\"([^\"]+)\"                                    {yylval.cadenaVal = strdup(yytext);return CADENA;}
+\"[^\"\n]*\"                                    {yylval.stringVal = strdup(yytext + 1); yylval.stringVal[strlen(yylval.stringVal) - 1] = '\0'; printf(yytext);return CADENA;}
 
-imprimir|escribir|poner                         return IMPRIMIR;
+print                                           return IMPRIMIR;
 [0-9]+                                          {yylval.enteroVal = atoi(yytext); return NUMERICO;}
 [0-9]+.[0-9]+                                   {yylval.realVal   = atof(yytext); return NUMERICODECIMAL;}
 _?[a-zA-Z0-9_]+		                            {yylval.stringVal = strdup(yytext); printf(yytext);return IDENTIFICADOR;}
