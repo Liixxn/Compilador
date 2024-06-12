@@ -10,12 +10,13 @@ int contadorEtiqueta = 0;         // Variable para el control de las etiquetas
 int numMaxRegistros = 32;         // Variable que indica el numero maximo de registros disponibles
 int nombreVariable = 0;           // Almacena el entero que se asociará al nombre de la variable
 int contadorRegistrosCadenas = 0;
+int numMaxRegistrosCadenas = 7;   // Variable que indica el numero maximo de registros disponibles para cadenas
 
 //Por defecto, tenemos 32 registros de tipo f para controlar los registros libres (true) o ocupados (false)
 bool registros[32] = {[0 ... 29] = true, [30 ... 31] = true}; // Los registros 30 y 31 están reservados por defecto para imprimir por pantalla
+bool registroString[7] = {[0 ... 6] = true}; 
 
-
-// Estructura variable, se hará uso de la misma para almacenar y imprimir las variables del codigo latino
+// Estructura variable, se hará uso de la misma para almacenar y imprimir las variables del codigo python
 struct variable {
     float dato;
     char *texto;
@@ -67,23 +68,17 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
 
   //TIPO NODO 1 - Nueva hoja en el arbol
   if (n->tipoNodo == 1) {
-    //printf("\n[ARBOL AST ]: Se crea una nueva hoja en el arbol\n");
-    //printf("Tipo del nodo a evaluar %s\n", n->tipo);
     if (strcmp(n->tipo, "texto") == 0) {
-      //printf("\nEntra si es texto\n");
       dato.texto = n->valorNodo.valorString;
 
-      if (contadorRegistrosCadenas >= 7) {
-          contadorRegistrosCadenas = 0;
-      }
-      fprintf(yyout, "la $t%d, var_%d\n", contadorRegistrosCadenas, n->nombreVar);
+      int registro = encontrarRegString();
+      
+      fprintf(yyout, "la $t%d, var_%d\n", registro, n->nombreVar);
       contadorRegistrosCadenas++;
     } else if (strcmp(n->tipo, "numerico") == 0) {
-      //printf("\nEntra si es numerico\n");
       dato.valor = n->valorNodo.valorDouble;
       fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
     } else if (strcmp(n->tipo, "numericoDecimal") == 0) {
-      //printf("\nEntra si es numericoDecimal\n");
       dato.valor = n->valorNodo.valorDouble;
       fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
     }
@@ -91,13 +86,12 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
 
   //TIPO NODO 3 - Nueva suma
   }  else if (n->tipoNodo == 2) {
-    printf("\nSe realiza una nueva suma %s\n", n->tipo);
+
     if (strcmp(n->tipo, "texto") == 0) {
-      printf("\nEntra dentro de texto\n");
+
       char *izqString = comprobarValorNodo(n->izq, contadorEtiquetaLocal).texto;
       char *dchaString = comprobarValorNodo(n->dcha, contadorEtiquetaLocal).texto;
 
-      printf("\nSe realiza una nueva concatenacion de texto\n");
       dato.texto = malloc(strlen(izqString) + strlen(dchaString) + 1);
       strcpy(dato.texto, izqString);
       strcat(dato.texto, dchaString);
@@ -138,7 +132,6 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
 
   //TIPO NODO 20 - Nueva variable
   } else if (n->tipoNodo == 6) {
-    printf("\nSe crea una nueva variable\n");
 
     if (strcmp(n->tipo, "texto") == 0) {
       dato.texto = n->valorNodo.valorString;
@@ -368,7 +361,6 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
 // METODO "comprobarAST", imprime el codigo .asm y generas sus respectivos pasos
 comprobarAST(struct ast *n)
 {
-  printf("\n------------imprimir variables------------\n");
   imprimirVariables(); //Metodo que realiza la impresion de la parte de variables para Mips
   fprintf(yyout, "\n#--------------------- Ejecuciones ---------------------");
   fprintf(yyout, "\n.text\n");
@@ -376,7 +368,7 @@ comprobarAST(struct ast *n)
   comprobarValorNodo(n, contadorEtiqueta); //Comprueba el valor del nodo
 }
 
-// METODO "imprimir", imprime el codigo .asm que hace referencia a la funcion imprimir de latino
+// METODO "imprimir", imprime el codigo .asm que hace referencia a la funcion imprimir de python
 funcionImprimir(struct ast *n)
 {
 
@@ -400,7 +392,6 @@ funcionImprimir(struct ast *n)
     saltoLinea(); //Introducimos un salto de linea
   }
 
-
 }
 
 
@@ -415,13 +406,9 @@ imprimirVariables(){
   //Bucle que recorre el array de variables y las imprime en el archivo .asm
   for (int i = 0; i < 64; i++) {
       if(variables[i].disponible == true){
-        printf("Variable disponible: %d\n", variables[i].nombre);
-        printf("Registro disponible: %d\n", variables[i].registro);
         if (variables[i].texto != NULL) {
-          contadorRegistrosCadenas++;
           fprintf(yyout, "var_%d: .asciiz \"%s\"\n", variables[i].nombre, variables[i].texto);
         } else {
-          printf("\nContenido de la variable float: %.3f\n", variables[i].dato);
           fprintf(yyout, "var_%d: .float %.3f\n", variables[i].nombre, variables[i].dato);
       }
       }
@@ -443,10 +430,32 @@ encontrarReg()
   while (posicion <= (numMaxRegistros - 1) && registros[posicion] == 0) {  // registros[posicion] == 0, evita recorrer todo el array
     posicion++;
   }
+
+  if (posicion == numMaxRegistros) {
+    posicion = 0;
+  }
+
   registros[posicion] = 0;
-  printf("\nEl registro libre es: %d\n", posicion); //Imprime la posicion libre
   return posicion; //retorna la posicion donde se encuentra el registro libre
 }
+
+encontrarRegString()
+{
+  int posicion = 0;
+  
+  while (contadorRegistrosCadenas <= (numMaxRegistrosCadenas -1) && registroString[posicion] == 0) {
+    posicion++;
+  }
+  if (contadorRegistrosCadenas == numMaxRegistrosCadenas) {
+    contadorRegistrosCadenas = 0;
+    posicion = 0;
+  }
+
+  registroString[posicion] = 0;
+  
+  return posicion; //retorna la posicion donde se encuentra el registro libre
+}
+
 
 // METODO "borrarReg", pone a true de nuevo el registro para que pueda volver a usarse
 borrarReg(struct ast *izq, struct ast *dcha) {
@@ -456,7 +465,6 @@ borrarReg(struct ast *izq, struct ast *dcha) {
 //METODO "crearNodoVacio", crea un nuevo nodo sin contenido
 struct ast *crearNodoVacio()
 {
-  printf("\nSe crea un nuevo nodo vacio\n");
   struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
   n->izq = NULL; n->dcha = NULL; n->tipoNodo = NULL;
   n->tipo = NULL;
@@ -466,7 +474,6 @@ struct ast *crearNodoVacio()
 // METODO "crearNodoTerminal", crear una nueva hoja en el arbol AST de tipo numerico o numericodecimal
 struct ast *crearNodoTerminal(double valor , char *tipo)
 {
-  printf("\nSe crea una nueva hoja en el arbol de tipo numerico\n");
   struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
   n->izq = NULL; n->dcha = NULL; n->tipoNodo = 1;
   n->valorNodo.valorDouble = valor;
@@ -475,7 +482,6 @@ struct ast *crearNodoTerminal(double valor , char *tipo)
 
   n->resultado = encontrarReg(); //Hacemos llamada al metodo para buscar un nuevo registro
   n->nombreVar = crearNombreVariable();
-  printf("\n---------------Se guarda la variable float----------------\n");
   printf("# [AST] - Registro $f%d ocupado para var_%d = %.3f\n", n->resultado, n->nombreVar, n->valorNodo.valorDouble);
   variables[n->resultado].dato = n->valorNodo.valorDouble;
   variables[n->resultado].nombre = n->nombreVar;
@@ -487,7 +493,6 @@ struct ast *crearNodoTerminal(double valor , char *tipo)
 // METODO "crearNodoTerminalString", crear una nueva hoja en el arbol AST de tipo string
 struct ast *crearNodoTerminalString(char *valor , char *tipo)
 {
-  printf("\nSe crea una nueva hoja en el arbol de tipo string\n");
   struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
   n->izq = NULL; n->dcha = NULL; n->tipoNodo = 1;
   n->valorNodo.valorString = valor;
@@ -496,7 +501,6 @@ struct ast *crearNodoTerminalString(char *valor , char *tipo)
 
   n->resultado = encontrarReg(); //Hacemos llamada al metodo para buscar un nuevo registro
   n->nombreVar = crearNombreVariable();
-  printf("\n---------------Se guarda la variable string----------------\n");
   printf("# [AST] - Registro $f%d ocupado para var_%d = %s\n", n->resultado, n->nombreVar, n->valorNodo.valorString);
   variables[n->resultado].texto = n->valorNodo.valorString;
   variables[n->resultado].nombre = n->nombreVar;
@@ -510,7 +514,6 @@ struct ast *crearNodoTerminalString(char *valor , char *tipo)
 // METODO "crearNodoNoTerminal", crea un nuevo nodo, asignamos sus hijos y tipo, y buscamos nuevo registro
 struct ast *crearNodoNoTerminal(struct ast *izq, struct ast *dcha, int tipoNodo)
 {
-  printf("\nSe crea un nuevo nodo no terminal f\n");
 
   struct ast *n = malloc(sizeof(struct ast)); // Crea un nuevo nodo
   n->izq = izq; n->dcha = dcha; n->tipoNodo = tipoNodo; // Asignamos al nodo genérico sus hijos y tipo
@@ -532,7 +535,6 @@ struct ast *crearNodoNoTerminal(struct ast *izq, struct ast *dcha, int tipoNodo)
 // METODO "crearVariableTerminal", crear el nodo hoja para una variable ya creada
 struct ast *crearVariableTerminal(double valor, int registro, char *t)
 {
-  printf("\nSe crea una nueva variable terminal\n");
   struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
   n->izq = NULL; n->dcha = NULL; n->tipoNodo = 6; n->valorNodo.valorDouble = valor;
   n->tipo = t;
@@ -544,12 +546,10 @@ struct ast *crearVariableTerminal(double valor, int registro, char *t)
 // METODO "crearVariableTerminalString", crear el nodo hoja para una variable ya creada
 struct ast *crearVariableTerminalString(char *valor, int registro, char *t)
 {
-  printf("\nSe crea una nueva variable terminal string\n");
   struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
   n->izq = NULL; n->dcha = NULL; n->tipoNodo = 6; n->valorNodo.valorString = valor;
   n->tipo = t;
   n->resultado = registro;
-  printf("Valor de la nueva variable terminal %s\n", n->valorNodo.valorString);
-  printf("Numero de registro de la nueva variable terminal %d\n", n->resultado);
+
   return n;
 }

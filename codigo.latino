@@ -1,6 +1,5 @@
 texto = "Hola" + "amigos"
 print(texto)
-
 t1 = "Buenas"
 t2 = " tardes"
 print(t1 + t2)

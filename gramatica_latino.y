@@ -78,7 +78,7 @@ codigo:
 //PRODUCCION "sentencias", puede estar formado por una sentencia o un grupo de sentencias
 //S --> D | S D
 sentencias:
-    sentencia
+    sentencia { $$ = $1; }
     | sentencias sentencia { //para hacerlo recursivo
         $$.n = crearNodoNoTerminal($1.n, $2.n, 7);
     }
@@ -88,10 +88,10 @@ sentencias:
 //D --> A | I 
 sentencia:   //Por defecto bison, asigna $1 a $$ por lo que no es obligatoria realizar la asignacion
     asignacion              
-    | imprimir
-    | bucle_w
-    | bucle_f
-    | condicion_if        
+    | imprimir      
+    | bucle_w       
+    | bucle_f       
+    | condicion_if      
 ;
 
 //-------------------------------------------------------- ASIGNACION --------------------------------------------------------
@@ -125,11 +125,9 @@ asignacion:
         //Para crear un nuevo simbolo de tipo texto
         else if (strcmp($3.tipo, tipos[2]) == 0){ //comprobacion si es texto
             printf("Asignado el valor %s a la variable\n",$3.texto);
-            printf("\nNombre de la variable gramatica_latino: %s\n", $1);
             tabla[indice].nombre = $1; 
             tabla[indice].tipo = tipos[2];
             tabla[indice].texto = $3.texto;
-            printf("\nEl registro que es donde esta guardado su dato es: %d\n", $3.n->resultado);
             tabla[indice].registro = $3.n->resultado;
 
             indice++;
@@ -137,20 +135,11 @@ asignacion:
         // Control de errores
         else{
             yyerror("*** ERROR No es ninguno de los tipos definidos ***");
+            printf("Error en la linea %d\n", num_linea);
         }
-
-
-
-        printf("\n------------ANTES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
-        printf("parte izq latino %s\n", $3.tipo);
         
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
-        printf("\nNodo creado despues: Nombre: var_%d y Registro: %d\n", $$.n->nombreVar, $$.n->resultado);
-        //printf("\nValor del nodo: %s\n", $$.n->valorNodo.valorString);
-
-        printf("\n------------DESPUES DE CREAR NODO NO TERMINAL ASIGNACION----------------\n");
-
-        
+        printf("Numero linea asignacion %d\n", num_linea);
 
     }
 ;
@@ -169,10 +158,8 @@ expresion:
             printf("> [OPERACION] - SUMA {numerico / numerico}\n");
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2); 
             $$.tipo = tipos[0]; 
-            printf("Tipo del nodo numerico fa: %s\n", $$.tipo);
             $$.numerico = $1.numerico + $3.numerico;
             $$.n->tipo = tipos[0];
-            printf("Nodo final thtr %s\n", $$.n->izq->tipo);
         }
 
         //Suma de numericoDecimal + numericoDecimal
@@ -204,11 +191,6 @@ expresion:
             variables[$$.n->resultado].registro = $$.n->resultado;
             variables[$$.n->resultado].disponible = true;
 
-            
-            
-
-            printf("\nREGISTRO ENCONTRADO PARA LA CADENA UNIFICADA %d\n", $$.n->resultado);
-
             // for (int i = 0; i < 64; i++){
             //     printf("\nValor de las variable en la posicion %d: %s\n", i, variables[i].texto);
             // }
@@ -217,7 +199,10 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion SUMA ***");
+            printf("Error en la linea %d\n", num_linea);
         }
+
+        printf("Numero linea suma %d\n", num_linea);
     }
     //RESTA
     | expresion RESTA tipos {
@@ -239,6 +224,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion RESTA ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
     //MULTIPLICACION
@@ -261,6 +247,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion MULTIPLICACION ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
     //DIVISION
@@ -272,9 +259,6 @@ expresion:
             $$.n = crearNodoNoTerminal($1.n, $3.n, 8);
             $$.tipo = tipos[0]; 
             $$.numerico = $1.numerico / $3.numerico;
-             printf("El valor de la operacion es: %d\n",  $1.numerico);
-            printf("El valor de la operacion es: %d\n",  $3.numerico);
-            printf("El valor de la operacion es: %d\n", $$.numerico); 
         }
         //DIVISION de numericoDecimal * numericoDecimal
         else if (strcmp($1.tipo, tipos[1]) == 0 && strcmp($3.tipo, tipos[1]) == 0){  //comprobacion del tipo
@@ -286,6 +270,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion division ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
     //MAYOR_QUE
@@ -308,6 +293,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion MAYOR QUE ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
     //MAYOR_IGUAL_QUE
@@ -330,6 +316,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion MAYOR O IGUAL QUE ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
     //MENOR_QUE
@@ -351,7 +338,9 @@ expresion:
         }
         // Control de errores
         else{
-            yyerror("*** ERROR en la operacion MENOR QUE ***");}
+            yyerror("*** ERROR en la operacion MENOR QUE ***");
+            printf("Error en la linea %d\n", num_linea);
+        }
     }
     //MENOR_IGUAL_QUE
     | expresion MENOR_IGUAL_QUE tipos {
@@ -373,6 +362,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion MENOR O IGUAL QUE ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }//IGUAL_IGUAL
     | expresion IGUAL_IGUAL tipos {
@@ -394,6 +384,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion IGUAL IGUAL ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }//NO_IGUAL
     | expresion NO_IGUAL tipos {
@@ -422,6 +413,7 @@ expresion:
         // Control de errores
         else{
             yyerror("*** ERROR en la operacion DISTINTO DE ***");
+            printf("Error en la linea %d\n", num_linea);
         }
     }
         //AND
@@ -488,12 +480,6 @@ tipos:
             }
             //Para si es de tipo texto
             else if (tabla[pos].tipo==tipos[2]){
-                printf("\n----------Informacion del id guardado en la tabla de simbolos----------\n");
-                printf("Nombre: %s\n", tabla[pos].nombre);
-                printf("Texto: %s\n", tabla[pos].texto);
-                printf("Registro: %d\n", tabla[pos].registro);
-                printf("Tipo: %s\n", tabla[pos].tipo);
-                printf("\n----------Fin de la informacion del id guardado en la tabla de simbolos----------\n");
                 $$.tipo = tabla[pos].tipo; 
                 $$.n = crearVariableTerminalString(tabla[pos].texto, tabla[pos].registro, tabla[pos].tipo); //Creamos un nodo terminal con las cadenas{
 
@@ -509,7 +495,6 @@ tipos:
         $$.tipo = tipos[0];
 
         $$.n = crearNodoTerminal($1, tipos[0]);
-        printf("TIPO EN TIPOS %s\n", $$.n->tipo);
         
     }
 
@@ -531,23 +516,23 @@ tipos:
         $$.tipo = tipos[2];
 
         $$.n = crearNodoTerminalString($1, tipos[2]);
-
     }
 ;
 
 //-----------------------------------------------  IMPRIMIR  ---------------------------------------------
-//Representa la estructura del print en lenguaje latino
+//Representa la estructura del print en lenguaje python
 //I --> imprimir ( E ) 
 imprimir: 
     IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS { 
         printf("> [SENTENCIA] - Imprimir\n");
         $$.n = crearNodoNoTerminal($3.n, crearNodoVacio(), 4);        
+        printf("Numero linea imprimir %d\n", num_linea);
     }
 ;
 
 
 //-----------------------------------------------  BUCLE WHILE ---------------------------------------------
-//Representa la estructura del bucle while en lenguaje latino
+//Representa la estructura del bucle while en lenguaje python
 //W --> while ( E ): S 'fin_bucle'
 bucle_w:
     WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE {
@@ -569,7 +554,7 @@ bucle_f:
 ;
 
 //-----------------------------------------------  CONDICION IF ---------------------------------------------
-//Representa la estructura de la condicion if en lenguaje latino
+//Representa la estructura de la condicion if en lenguaje python
 //IF_CONDICION --> if ( E ): S else: S 'fin_conndicion'
 condicion_if:
     IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION {
@@ -591,7 +576,6 @@ elif_clauses:
     }
     | elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias {
         printf("> [SENTENCIA] - Condicion Elif\n");
-        printf("El resultado es: %d\n", $4.numerico);
         if($4.numerico == 1){
             $$.numerico = 1;
             $$.n = crearNodoNoTerminal($7.n, crearNodoVacio(), 7); // 7 is the number for elif
@@ -616,8 +600,8 @@ else_clause:
 
 //--------------------------------------------------- METODO MAIN -----------------------------------------------
 int main(int argc, char** argv) {
-    yyin = fopen(argv[1], "rt");            //Apertura del archivo codigo.latino
-    yyout = fopen( "./latino.asm", "wt" );  //Para el archivo .ASM con nombre "latino.asm"
+    yyin = fopen(argv[1], "rt");            //Apertura del archivo codigo.python
+    yyout = fopen( "./latino.asm", "wt" );  //Para el archivo .ASM con nombre "python.asm"
 	yyparse();
     fclose(yyin);
     return 0;
@@ -629,6 +613,6 @@ int main(int argc, char** argv) {
 //Metodo yyerror, generado por defecto
 void yyerror(const char* s) {
     fprintf(stderr, "\n--------------------------------------------------------\n");
-    fprintf(stderr, "%s", s);
+    fprintf(stderr, "Error en la linea %d: %s", num_linea, s);
     fprintf(stderr, "\n--------------------------------------------------------\n\n");
 }
