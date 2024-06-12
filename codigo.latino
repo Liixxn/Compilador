@@ -1,14 +1,19 @@
 
-# suma = 8
+#todoloquepongaaquinodeberia hacer nadaaaaa
 """
-suma = "hola"
-
+suma = 3
+for i in range (2):
+    suma = suma - 1
+finFor
+suma = suma + 1
 print(suma)
+
 """
-suma = "Adios"
+num = 5
+miarray = [9, 5, 8, 10, 5]
+print(num)
+numero = miarray[3]
 
-print(suma)
-
-
+print(numero)
 
 

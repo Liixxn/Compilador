@@ -20,6 +20,7 @@ struct variable {
     char *texto;
     int nombre; //limite de caracteres de la variable
     bool disponible;
+    int *array;
 };
 
 struct variable variables[64]; // Declaramos el array de variables usando la estructura definida
@@ -28,6 +29,7 @@ struct variable variables[64]; // Declaramos el array de variables usando la est
 union astValor {
     double valorDouble;
     char *valorString;
+    int *array;
 };
 
 // Estructura que almacena el valor de retorno de la funcion comprobarValorNodo
@@ -35,6 +37,7 @@ struct valorNodoRetorno {
     double valor;
     char *texto;
     bool booleano;
+    int *array;
 };
 
 
@@ -66,18 +69,23 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
   //TIPO NODO 1 - Nueva hoja en el arbol
   if (n->tipoNodo == 1) {
     printf("\nSe crea una nueva hoja en el arbol\n");
-    //printf("Tipo del nodo a evaluar %s\n", n->tipo);
+    printf("Tipo del nodoooo a evaluar %s\n", n->tipo);
     if (strcmp(n->tipo, "texto") == 0) {
-      //printf("\nEntra si es texto\n");
+      printf("\nEntra si es texto\n");
       dato.texto = n->valorNodo.valorString;
       fprintf(yyout, "la $a%d, var_%d\n", n->resultado, n->nombreVar);
     } else if (strcmp(n->tipo, "numerico") == 0) {
-      //printf("\nEntra si es numerico\n");
+      printf("\nEntra si es numerico\n");
       dato.valor = n->valorNodo.valorDouble;
       fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
     } else if (strcmp(n->tipo, "numericoDecimal") == 0) {
-      //printf("\nEntra si es numericoDecimal\n");
+      printf("\nEntra si es numericoDecimal\n");
       dato.valor = n->valorNodo.valorDouble;
+      fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
+    }
+    else if (strcmp(n->tipo, "array") == 0) {
+      printf("\nEntra si es array\n");
+      dato.array = n->valorNodo.array;
       fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
     }
 
@@ -118,6 +126,9 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
       dato.valor = n->valorNodo.valorDouble;
     } else if (strcmp(n->tipo, "numericoDecimal") == 0) {
       dato.valor = n->valorNodo.valorDouble;
+    }
+    else if (strcmp(n->tipo, "array") == 0) {
+      dato.array = n->valorNodo.array;
     } 
 
   //TIPO NODO 22 - Lista de sentencias
@@ -390,7 +401,21 @@ imprimirVariables(){
         if (variables[i].texto != NULL) {
           printf("\nContenido de la variable string: %s\n", variables[i].texto);
           fprintf(yyout, "var_%d: .asciiz \"%s\"\n", variables[i].nombre, variables[i].texto);
-        } else {
+        } else if (variables[i].array != NULL ) {
+          printf("\nContenido de la variable array: ");
+          fprintf(yyout, "var_%d: .word ", variables[i].nombre); 
+          for (int j = 1; j <= variables[i].array[0]; j++) {
+            printf("%d ", variables[i].array[j]);
+            if (j == variables[i].array[0]) {
+              fprintf(yyout, "%d\n", variables[i].array[j]);
+            } else {
+              fprintf(yyout, "%d, ", variables[i].array[j]);
+            }
+          }
+          fprintf(yyout, "\n");
+
+        }
+         else {
           printf("\nContenido de la variable float: %.3f\n", variables[i].dato);
           fprintf(yyout, "var_%d: .float %.3f\n", variables[i].nombre, variables[i].dato);
       }
@@ -473,6 +498,27 @@ struct ast *crearNodoTerminalString(char *valor , char *tipo)
   return n;
 }
 
+// METODO "crearNodoTerminalArray", crear una nueva hoja en el arbol AST de tipo array
+struct ast *crearNodoTerminalArray(int *valores , char *tipo)
+{ 
+  printf("\nSe crea una nueva hoja en el arbol de tipo array\n");
+  struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
+  n->izq = NULL; n->dcha = NULL; n->tipoNodo = 1; 
+  n->valorNodo.array = valores;
+
+  n->tipo = tipo;
+  printf("LLEGO AQUI");
+
+  n->resultado = encontrarReg(); //Hacemos llamada al metodo para buscar un nuevo registro
+  n->nombreVar = crearNombreVariable();
+  printf("\n---------------Se guarda la variable array----------------\n");
+  printf("# [AST] - Registroooooo $f%d ocupado para var_%d =\n", n->resultado, n->nombreVar);
+  printf("Valor de la variable array %d\n", n->valorNodo.array[0]);
+  variables[n->resultado].array = n->valorNodo.array; 
+  variables[n->resultado].nombre = n->nombreVar;
+  variables[n->resultado].disponible = true;
+  return n;
+}
 
 
 // METODO "crearNodoNoTerminal", crea un nuevo nodo, asignamos sus hijos y tipo, y buscamos nuevo registro
@@ -519,6 +565,20 @@ struct ast *crearVariableTerminalString(char *valor, int registro, char *t)
   n->tipo = t;
   n->resultado = registro;
   printf("Valor de la nueva variable terminal %s\n", n->valorNodo.valorString);
+  printf("Numero de registro de la nueva variable terminal %d\n", n->resultado);
+  return n;
+}
+
+
+// METODO "crearVariableTerminalArray", crear el nodo hoja para una variable ya creada
+struct ast *crearVariableTerminalArray(int *valores, int registro, char *t)
+{                                     
+  printf("\nSe crea una nueva variable terminal\n");
+  struct ast *n = malloc(sizeof(struct ast)); // Asigna memoria dinamicamente para el nuevo nodo
+  n->izq = NULL; n->dcha = NULL; n->tipoNodo = 6; n->valorNodo.array = valores;
+  n->tipo = t;
+  n->resultado = registro;
+  printf("Valor de la nueva variable terminal %s\n", n->valorNodo.array[0]);
   printf("Numero de registro de la nueva variable terminal %d\n", n->resultado);
   return n;
 }

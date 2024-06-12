@@ -1,8 +1,6 @@
 Terminals unused in grammar
 
-   APERTURACORCHETE
-   CIERRECORCHETE
-   COMA
+   NUM
 
 
 Grammar
@@ -34,26 +32,31 @@ Grammar
    19          | expresion NO_IGUAL tipos
    20          | expresion AND tipos
    21          | expresion OR tipos
-   22          | tipos
+   22          | IDENTIFICADOR APERTURACORCHETE expresion CIERRECORCHETE
+   23          | APERTURACORCHETE elements CIERRECORCHETE
+   24          | tipos
 
-   23 tipos: IDENTIFICADOR
-   24      | NUMERICO
-   25      | NUMERICODECIMAL
-   26      | CADENA
+   25 elements: NUMERICO
+   26         | elements COMA NUMERICO
 
-   27 imprimir: IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS
+   27 tipos: IDENTIFICADOR
+   28      | NUMERICO
+   29      | NUMERICODECIMAL
+   30      | CADENA
 
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
+   31 imprimir: IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS
 
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
 
-   31 elif_clauses: /* empty */
-   32             | elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
 
-   33 else_clause: ELSE_CONDICION DOSPUNTOS sentencias
-   34            | /* empty */
+   35 elif_clauses: /* empty */
+   36             | elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
+
+   37 else_clause: ELSE_CONDICION DOSPUNTOS sentencias
+   38            | /* empty */
 
 
 Terminals, with rules where they appear
@@ -65,11 +68,11 @@ RESTA (259) 11
 MULTIPLICACION (260) 12
 DIVISION (261) 13
 IGUAL (262) 9
-APERTURAPARENTESIS (263) 27 28 29 30 32
-CIERREPARENTESIS (264) 27 28 29 30 32
-APERTURACORCHETE (265)
-CIERRECORCHETE (266)
-IMPRIMIR (267) 27
+APERTURAPARENTESIS (263) 31 32 33 34 36
+CIERREPARENTESIS (264) 31 32 33 34 36
+APERTURACORCHETE (265) 22 23
+CIERRECORCHETE (266) 22 23
+IMPRIMIR (267) 31
 MAYOR_QUE (268) 14
 MENOR_QUE (269) 16
 MAYOR_IGUAL_QUE (270) 15
@@ -78,54 +81,57 @@ IGUAL_IGUAL (272) 18
 NO_IGUAL (273) 19
 AND (274) 20
 OR (275) 21
-WHILE (276) 28
-FIN_BUCLE (277) 28
-DOSPUNTOS (278) 28 29 30 32 33
-FOR_BUCLE (279) 29
-FIN_FOR (280) 29
-IN (281) 29
-RANGE (282) 29
-COMA (283)
-IF_CONDICION (284) 30
-ELIF_CONDICION (285) 32
-ELSE_CONDICION (286) 33
-FIN_CONDICION (287) 30
-NUMERICO (288) 24
-NUMERICODECIMAL (289) 25
-IDENTIFICADOR (290) 9 23 29
-CADENA (291) 26
+WHILE (276) 32
+FIN_BUCLE (277) 32
+DOSPUNTOS (278) 32 33 34 36 37
+FOR_BUCLE (279) 33
+FIN_FOR (280) 33
+IN (281) 33
+RANGE (282) 33
+COMA (283) 26
+IF_CONDICION (284) 34
+ELIF_CONDICION (285) 36
+ELSE_CONDICION (286) 37
+FIN_CONDICION (287) 34
+NUMERICO (288) 25 26 28
+NUMERICODECIMAL (289) 29
+IDENTIFICADOR (290) 9 22 27 33
+CADENA (291) 30
+NUM (292)
 
 
 Nonterminals, with rules where they appear
 
-$accept (37)
+$accept (38)
     on left: 0
-codigo (38)
+codigo (39)
     on left: 1, on right: 0
-sentencias (39)
-    on left: 2 3, on right: 1 3 28 29 30 32 33
-sentencia (40)
+sentencias (40)
+    on left: 2 3, on right: 1 3 32 33 34 36 37
+sentencia (41)
     on left: 4 5 6 7 8, on right: 2 3
-asignacion (41)
+asignacion (42)
     on left: 9, on right: 4
-expresion (42)
-    on left: 10 11 12 13 14 15 16 17 18 19 20 21 22, on right: 9 10
-    11 12 13 14 15 16 17 18 19 20 21 27 28 29 30 32
-tipos (43)
-    on left: 23 24 25 26, on right: 10 11 12 13 14 15 16 17 18 19 20
-    21 22
-imprimir (44)
-    on left: 27, on right: 5
-bucle_w (45)
-    on left: 28, on right: 6
-bucle_f (46)
-    on left: 29, on right: 7
-condicion_if (47)
-    on left: 30, on right: 8
-elif_clauses (48)
-    on left: 31 32, on right: 30 32
-else_clause (49)
-    on left: 33 34, on right: 30
+expresion (43)
+    on left: 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24, on right:
+    9 10 11 12 13 14 15 16 17 18 19 20 21 22 31 32 33 34 36
+elements (44)
+    on left: 25 26, on right: 23 26
+tipos (45)
+    on left: 27 28 29 30, on right: 10 11 12 13 14 15 16 17 18 19 20
+    21 24
+imprimir (46)
+    on left: 31, on right: 5
+bucle_w (47)
+    on left: 32, on right: 6
+bucle_f (48)
+    on left: 33, on right: 7
+condicion_if (49)
+    on left: 34, on right: 8
+elif_clauses (50)
+    on left: 35 36, on right: 34 36
+else_clause (51)
+    on left: 37 38, on right: 34
 
 
 state 0
@@ -150,28 +156,28 @@ state 0
 
 state 1
 
-   27 imprimir: IMPRIMIR . APERTURAPARENTESIS expresion CIERREPARENTESIS
+   31 imprimir: IMPRIMIR . APERTURAPARENTESIS expresion CIERREPARENTESIS
 
     APERTURAPARENTESIS  shift, and go to state 14
 
 
 state 2
 
-   28 bucle_w: WHILE . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
+   32 bucle_w: WHILE . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
 
     APERTURAPARENTESIS  shift, and go to state 15
 
 
 state 3
 
-   29 bucle_f: FOR_BUCLE . IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   33 bucle_f: FOR_BUCLE . IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
 
     IDENTIFICADOR  shift, and go to state 16
 
 
 state 4
 
-   30 condicion_if: IF_CONDICION . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
+   34 condicion_if: IF_CONDICION . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
 
     APERTURAPARENTESIS  shift, and go to state 17
 
@@ -255,61 +261,65 @@ state 13
 
 state 14
 
-   27 imprimir: IMPRIMIR APERTURAPARENTESIS . expresion CIERREPARENTESIS
+   31 imprimir: IMPRIMIR APERTURAPARENTESIS . expresion CIERREPARENTESIS
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
 
-    expresion  go to state 25
-    tipos      go to state 26
+    expresion  go to state 26
+    tipos      go to state 27
 
 
 state 15
 
-   28 bucle_w: WHILE APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
+   32 bucle_w: WHILE APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
 
-    expresion  go to state 27
-    tipos      go to state 26
+    expresion  go to state 28
+    tipos      go to state 27
 
 
 state 16
 
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR . IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR . IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
 
-    IN  shift, and go to state 28
+    IN  shift, and go to state 29
 
 
 state 17
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
 
-    expresion  go to state 29
-    tipos      go to state 26
+    expresion  go to state 30
+    tipos      go to state 27
 
 
 state 18
 
     9 asignacion: IDENTIFICADOR IGUAL . expresion
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
 
-    expresion  go to state 30
-    tipos      go to state 26
+    expresion  go to state 31
+    tipos      go to state 27
 
 
 state 19
@@ -328,109 +338,121 @@ state 20
 
 state 21
 
-   24 tipos: NUMERICO .
+   23 expresion: APERTURACORCHETE . elements CIERRECORCHETE
 
-    $default  reduce using rule 24 (tipos)
+    NUMERICO  shift, and go to state 32
+
+    elements  go to state 33
 
 
 state 22
 
-   25 tipos: NUMERICODECIMAL .
+   28 tipos: NUMERICO .
 
-    $default  reduce using rule 25 (tipos)
+    $default  reduce using rule 28 (tipos)
 
 
 state 23
 
-   23 tipos: IDENTIFICADOR .
+   29 tipos: NUMERICODECIMAL .
 
-    $default  reduce using rule 23 (tipos)
+    $default  reduce using rule 29 (tipos)
 
 
 state 24
 
-   26 tipos: CADENA .
+   22 expresion: IDENTIFICADOR . APERTURACORCHETE expresion CIERRECORCHETE
+   27 tipos: IDENTIFICADOR .
 
-    $default  reduce using rule 26 (tipos)
+    APERTURACORCHETE  shift, and go to state 34
+
+    $default  reduce using rule 27 (tipos)
 
 
 state 25
 
-   10 expresion: expresion . SUMA tipos
-   11          | expresion . RESTA tipos
-   12          | expresion . MULTIPLICACION tipos
-   13          | expresion . DIVISION tipos
-   14          | expresion . MAYOR_QUE tipos
-   15          | expresion . MAYOR_IGUAL_QUE tipos
-   16          | expresion . MENOR_QUE tipos
-   17          | expresion . MENOR_IGUAL_QUE tipos
-   18          | expresion . IGUAL_IGUAL tipos
-   19          | expresion . NO_IGUAL tipos
-   20          | expresion . AND tipos
-   21          | expresion . OR tipos
-   27 imprimir: IMPRIMIR APERTURAPARENTESIS expresion . CIERREPARENTESIS
+   30 tipos: CADENA .
 
-    SUMA              shift, and go to state 31
-    RESTA             shift, and go to state 32
-    MULTIPLICACION    shift, and go to state 33
-    DIVISION          shift, and go to state 34
-    CIERREPARENTESIS  shift, and go to state 35
-    MAYOR_QUE         shift, and go to state 36
-    MENOR_QUE         shift, and go to state 37
-    MAYOR_IGUAL_QUE   shift, and go to state 38
-    MENOR_IGUAL_QUE   shift, and go to state 39
-    IGUAL_IGUAL       shift, and go to state 40
-    NO_IGUAL          shift, and go to state 41
-    AND               shift, and go to state 42
-    OR                shift, and go to state 43
+    $default  reduce using rule 30 (tipos)
 
 
 state 26
 
-   22 expresion: tipos .
+   10 expresion: expresion . SUMA tipos
+   11          | expresion . RESTA tipos
+   12          | expresion . MULTIPLICACION tipos
+   13          | expresion . DIVISION tipos
+   14          | expresion . MAYOR_QUE tipos
+   15          | expresion . MAYOR_IGUAL_QUE tipos
+   16          | expresion . MENOR_QUE tipos
+   17          | expresion . MENOR_IGUAL_QUE tipos
+   18          | expresion . IGUAL_IGUAL tipos
+   19          | expresion . NO_IGUAL tipos
+   20          | expresion . AND tipos
+   21          | expresion . OR tipos
+   31 imprimir: IMPRIMIR APERTURAPARENTESIS expresion . CIERREPARENTESIS
 
-    $default  reduce using rule 22 (expresion)
+    SUMA              shift, and go to state 35
+    RESTA             shift, and go to state 36
+    MULTIPLICACION    shift, and go to state 37
+    DIVISION          shift, and go to state 38
+    CIERREPARENTESIS  shift, and go to state 39
+    MAYOR_QUE         shift, and go to state 40
+    MENOR_QUE         shift, and go to state 41
+    MAYOR_IGUAL_QUE   shift, and go to state 42
+    MENOR_IGUAL_QUE   shift, and go to state 43
+    IGUAL_IGUAL       shift, and go to state 44
+    NO_IGUAL          shift, and go to state 45
+    AND               shift, and go to state 46
+    OR                shift, and go to state 47
 
 
 state 27
 
-   10 expresion: expresion . SUMA tipos
-   11          | expresion . RESTA tipos
-   12          | expresion . MULTIPLICACION tipos
-   13          | expresion . DIVISION tipos
-   14          | expresion . MAYOR_QUE tipos
-   15          | expresion . MAYOR_IGUAL_QUE tipos
-   16          | expresion . MENOR_QUE tipos
-   17          | expresion . MENOR_IGUAL_QUE tipos
-   18          | expresion . IGUAL_IGUAL tipos
-   19          | expresion . NO_IGUAL tipos
-   20          | expresion . AND tipos
-   21          | expresion . OR tipos
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
+   24 expresion: tipos .
 
-    SUMA              shift, and go to state 31
-    RESTA             shift, and go to state 32
-    MULTIPLICACION    shift, and go to state 33
-    DIVISION          shift, and go to state 34
-    CIERREPARENTESIS  shift, and go to state 44
-    MAYOR_QUE         shift, and go to state 36
-    MENOR_QUE         shift, and go to state 37
-    MAYOR_IGUAL_QUE   shift, and go to state 38
-    MENOR_IGUAL_QUE   shift, and go to state 39
-    IGUAL_IGUAL       shift, and go to state 40
-    NO_IGUAL          shift, and go to state 41
-    AND               shift, and go to state 42
-    OR                shift, and go to state 43
+    $default  reduce using rule 24 (expresion)
 
 
 state 28
 
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN . RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   10 expresion: expresion . SUMA tipos
+   11          | expresion . RESTA tipos
+   12          | expresion . MULTIPLICACION tipos
+   13          | expresion . DIVISION tipos
+   14          | expresion . MAYOR_QUE tipos
+   15          | expresion . MAYOR_IGUAL_QUE tipos
+   16          | expresion . MENOR_QUE tipos
+   17          | expresion . MENOR_IGUAL_QUE tipos
+   18          | expresion . IGUAL_IGUAL tipos
+   19          | expresion . NO_IGUAL tipos
+   20          | expresion . AND tipos
+   21          | expresion . OR tipos
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE
 
-    RANGE  shift, and go to state 45
+    SUMA              shift, and go to state 35
+    RESTA             shift, and go to state 36
+    MULTIPLICACION    shift, and go to state 37
+    DIVISION          shift, and go to state 38
+    CIERREPARENTESIS  shift, and go to state 48
+    MAYOR_QUE         shift, and go to state 40
+    MENOR_QUE         shift, and go to state 41
+    MAYOR_IGUAL_QUE   shift, and go to state 42
+    MENOR_IGUAL_QUE   shift, and go to state 43
+    IGUAL_IGUAL       shift, and go to state 44
+    NO_IGUAL          shift, and go to state 45
+    AND               shift, and go to state 46
+    OR                shift, and go to state 47
 
 
 state 29
+
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN . RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+
+    RANGE  shift, and go to state 49
+
+
+state 30
 
    10 expresion: expresion . SUMA tipos
    11          | expresion . RESTA tipos
@@ -444,24 +466,24 @@ state 29
    19          | expresion . NO_IGUAL tipos
    20          | expresion . AND tipos
    21          | expresion . OR tipos
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
 
-    SUMA              shift, and go to state 31
-    RESTA             shift, and go to state 32
-    MULTIPLICACION    shift, and go to state 33
-    DIVISION          shift, and go to state 34
-    CIERREPARENTESIS  shift, and go to state 46
-    MAYOR_QUE         shift, and go to state 36
-    MENOR_QUE         shift, and go to state 37
-    MAYOR_IGUAL_QUE   shift, and go to state 38
-    MENOR_IGUAL_QUE   shift, and go to state 39
-    IGUAL_IGUAL       shift, and go to state 40
-    NO_IGUAL          shift, and go to state 41
-    AND               shift, and go to state 42
-    OR                shift, and go to state 43
+    SUMA              shift, and go to state 35
+    RESTA             shift, and go to state 36
+    MULTIPLICACION    shift, and go to state 37
+    DIVISION          shift, and go to state 38
+    CIERREPARENTESIS  shift, and go to state 50
+    MAYOR_QUE         shift, and go to state 40
+    MENOR_QUE         shift, and go to state 41
+    MAYOR_IGUAL_QUE   shift, and go to state 42
+    MENOR_IGUAL_QUE   shift, and go to state 43
+    IGUAL_IGUAL       shift, and go to state 44
+    NO_IGUAL          shift, and go to state 45
+    AND               shift, and go to state 46
+    OR                shift, and go to state 47
 
 
-state 30
+state 31
 
     9 asignacion: IDENTIFICADOR IGUAL expresion .
    10 expresion: expresion . SUMA tipos
@@ -477,350 +499,239 @@ state 30
    20          | expresion . AND tipos
    21          | expresion . OR tipos
 
-    SUMA             shift, and go to state 31
-    RESTA            shift, and go to state 32
-    MULTIPLICACION   shift, and go to state 33
-    DIVISION         shift, and go to state 34
-    MAYOR_QUE        shift, and go to state 36
-    MENOR_QUE        shift, and go to state 37
-    MAYOR_IGUAL_QUE  shift, and go to state 38
-    MENOR_IGUAL_QUE  shift, and go to state 39
-    IGUAL_IGUAL      shift, and go to state 40
-    NO_IGUAL         shift, and go to state 41
-    AND              shift, and go to state 42
-    OR               shift, and go to state 43
+    SUMA             shift, and go to state 35
+    RESTA            shift, and go to state 36
+    MULTIPLICACION   shift, and go to state 37
+    DIVISION         shift, and go to state 38
+    MAYOR_QUE        shift, and go to state 40
+    MENOR_QUE        shift, and go to state 41
+    MAYOR_IGUAL_QUE  shift, and go to state 42
+    MENOR_IGUAL_QUE  shift, and go to state 43
+    IGUAL_IGUAL      shift, and go to state 44
+    NO_IGUAL         shift, and go to state 45
+    AND              shift, and go to state 46
+    OR               shift, and go to state 47
 
     $default  reduce using rule 9 (asignacion)
 
 
-state 31
-
-   10 expresion: expresion SUMA . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 47
-
-
 state 32
 
-   11 expresion: expresion RESTA . tipos
+   25 elements: NUMERICO .
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 48
+    $default  reduce using rule 25 (elements)
 
 
 state 33
 
-   12 expresion: expresion MULTIPLICACION . tipos
+   23 expresion: APERTURACORCHETE elements . CIERRECORCHETE
+   26 elements: elements . COMA NUMERICO
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 49
+    CIERRECORCHETE  shift, and go to state 51
+    COMA            shift, and go to state 52
 
 
 state 34
 
-   13 expresion: expresion DIVISION . tipos
+   22 expresion: IDENTIFICADOR APERTURACORCHETE . expresion CIERRECORCHETE
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
 
-    tipos  go to state 50
+    expresion  go to state 53
+    tipos      go to state 27
 
 
 state 35
 
-   27 imprimir: IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS .
+   10 expresion: expresion SUMA . tipos
 
-    $default  reduce using rule 27 (imprimir)
-
-
-state 36
-
-   14 expresion: expresion MAYOR_QUE . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 51
-
-
-state 37
-
-   16 expresion: expresion MENOR_QUE . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 52
-
-
-state 38
-
-   15 expresion: expresion MAYOR_IGUAL_QUE . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 53
-
-
-state 39
-
-   17 expresion: expresion MENOR_IGUAL_QUE . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    tipos  go to state 54
-
-
-state 40
-
-   18 expresion: expresion IGUAL_IGUAL . tipos
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
 
     tipos  go to state 55
 
 
-state 41
+state 36
 
-   19 expresion: expresion NO_IGUAL . tipos
+   11 expresion: expresion RESTA . tipos
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
 
     tipos  go to state 56
 
 
-state 42
+state 37
 
-   20 expresion: expresion AND . tipos
+   12 expresion: expresion MULTIPLICACION . tipos
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
 
     tipos  go to state 57
 
 
-state 43
+state 38
 
-   21 expresion: expresion OR . tipos
+   13 expresion: expresion DIVISION . tipos
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
 
     tipos  go to state 58
 
 
+state 39
+
+   31 imprimir: IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS .
+
+    $default  reduce using rule 31 (imprimir)
+
+
+state 40
+
+   14 expresion: expresion MAYOR_QUE . tipos
+
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 59
+
+
+state 41
+
+   16 expresion: expresion MENOR_QUE . tipos
+
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 60
+
+
+state 42
+
+   15 expresion: expresion MAYOR_IGUAL_QUE . tipos
+
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 61
+
+
+state 43
+
+   17 expresion: expresion MENOR_IGUAL_QUE . tipos
+
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 62
+
+
 state 44
 
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias FIN_BUCLE
+   18 expresion: expresion IGUAL_IGUAL . tipos
 
-    DOSPUNTOS  shift, and go to state 59
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 63
 
 
 state 45
 
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   19 expresion: expresion NO_IGUAL . tipos
 
-    APERTURAPARENTESIS  shift, and go to state 60
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 64
 
 
 state 46
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
+   20 expresion: expresion AND . tipos
 
-    DOSPUNTOS  shift, and go to state 61
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 65
 
 
 state 47
 
-   10 expresion: expresion SUMA tipos .
+   21 expresion: expresion OR . tipos
 
-    $default  reduce using rule 10 (expresion)
+    NUMERICO         shift, and go to state 22
+    NUMERICODECIMAL  shift, and go to state 23
+    IDENTIFICADOR    shift, and go to state 54
+    CADENA           shift, and go to state 25
+
+    tipos  go to state 66
 
 
 state 48
 
-   11 expresion: expresion RESTA tipos .
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias FIN_BUCLE
 
-    $default  reduce using rule 11 (expresion)
+    DOSPUNTOS  shift, and go to state 67
 
 
 state 49
 
-   12 expresion: expresion MULTIPLICACION tipos .
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
 
-    $default  reduce using rule 12 (expresion)
+    APERTURAPARENTESIS  shift, and go to state 68
 
 
 state 50
 
-   13 expresion: expresion DIVISION tipos .
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION
 
-    $default  reduce using rule 13 (expresion)
+    DOSPUNTOS  shift, and go to state 69
 
 
 state 51
 
-   14 expresion: expresion MAYOR_QUE tipos .
+   23 expresion: APERTURACORCHETE elements CIERRECORCHETE .
 
-    $default  reduce using rule 14 (expresion)
+    $default  reduce using rule 23 (expresion)
 
 
 state 52
 
-   16 expresion: expresion MENOR_QUE tipos .
+   26 elements: elements COMA . NUMERICO
 
-    $default  reduce using rule 16 (expresion)
+    NUMERICO  shift, and go to state 70
 
 
 state 53
-
-   15 expresion: expresion MAYOR_IGUAL_QUE tipos .
-
-    $default  reduce using rule 15 (expresion)
-
-
-state 54
-
-   17 expresion: expresion MENOR_IGUAL_QUE tipos .
-
-    $default  reduce using rule 17 (expresion)
-
-
-state 55
-
-   18 expresion: expresion IGUAL_IGUAL tipos .
-
-    $default  reduce using rule 18 (expresion)
-
-
-state 56
-
-   19 expresion: expresion NO_IGUAL tipos .
-
-    $default  reduce using rule 19 (expresion)
-
-
-state 57
-
-   20 expresion: expresion AND tipos .
-
-    $default  reduce using rule 20 (expresion)
-
-
-state 58
-
-   21 expresion: expresion OR tipos .
-
-    $default  reduce using rule 21 (expresion)
-
-
-state 59
-
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias FIN_BUCLE
-
-    IMPRIMIR       shift, and go to state 1
-    WHILE          shift, and go to state 2
-    FOR_BUCLE      shift, and go to state 3
-    IF_CONDICION   shift, and go to state 4
-    IDENTIFICADOR  shift, and go to state 5
-
-    sentencias    go to state 62
-    sentencia     go to state 8
-    asignacion    go to state 9
-    imprimir      go to state 10
-    bucle_w       go to state 11
-    bucle_f       go to state 12
-    condicion_if  go to state 13
-
-
-state 60
-
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
-
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    expresion  go to state 63
-    tipos      go to state 26
-
-
-state 61
-
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias elif_clauses else_clause FIN_CONDICION
-
-    IMPRIMIR       shift, and go to state 1
-    WHILE          shift, and go to state 2
-    FOR_BUCLE      shift, and go to state 3
-    IF_CONDICION   shift, and go to state 4
-    IDENTIFICADOR  shift, and go to state 5
-
-    sentencias    go to state 64
-    sentencia     go to state 8
-    asignacion    go to state 9
-    imprimir      go to state 10
-    bucle_w       go to state 11
-    bucle_f       go to state 12
-    condicion_if  go to state 13
-
-
-state 62
-
-    3 sentencias: sentencias . sentencia
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . FIN_BUCLE
-
-    IMPRIMIR       shift, and go to state 1
-    WHILE          shift, and go to state 2
-    FIN_BUCLE      shift, and go to state 65
-    FOR_BUCLE      shift, and go to state 3
-    IF_CONDICION   shift, and go to state 4
-    IDENTIFICADOR  shift, and go to state 5
-
-    sentencia     go to state 20
-    asignacion    go to state 9
-    imprimir      go to state 10
-    bucle_w       go to state 11
-    bucle_f       go to state 12
-    condicion_if  go to state 13
-
-
-state 63
 
    10 expresion: expresion . SUMA tipos
    11          | expresion . RESTA tipos
@@ -834,75 +745,117 @@ state 63
    19          | expresion . NO_IGUAL tipos
    20          | expresion . AND tipos
    21          | expresion . OR tipos
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+   22          | IDENTIFICADOR APERTURACORCHETE expresion . CIERRECORCHETE
 
-    SUMA              shift, and go to state 31
-    RESTA             shift, and go to state 32
-    MULTIPLICACION    shift, and go to state 33
-    DIVISION          shift, and go to state 34
-    CIERREPARENTESIS  shift, and go to state 66
-    MAYOR_QUE         shift, and go to state 36
-    MENOR_QUE         shift, and go to state 37
-    MAYOR_IGUAL_QUE   shift, and go to state 38
-    MENOR_IGUAL_QUE   shift, and go to state 39
-    IGUAL_IGUAL       shift, and go to state 40
-    NO_IGUAL          shift, and go to state 41
-    AND               shift, and go to state 42
-    OR                shift, and go to state 43
+    SUMA             shift, and go to state 35
+    RESTA            shift, and go to state 36
+    MULTIPLICACION   shift, and go to state 37
+    DIVISION         shift, and go to state 38
+    CIERRECORCHETE   shift, and go to state 71
+    MAYOR_QUE        shift, and go to state 40
+    MENOR_QUE        shift, and go to state 41
+    MAYOR_IGUAL_QUE  shift, and go to state 42
+    MENOR_IGUAL_QUE  shift, and go to state 43
+    IGUAL_IGUAL      shift, and go to state 44
+    NO_IGUAL         shift, and go to state 45
+    AND              shift, and go to state 46
+    OR               shift, and go to state 47
+
+
+state 54
+
+   27 tipos: IDENTIFICADOR .
+
+    $default  reduce using rule 27 (tipos)
+
+
+state 55
+
+   10 expresion: expresion SUMA tipos .
+
+    $default  reduce using rule 10 (expresion)
+
+
+state 56
+
+   11 expresion: expresion RESTA tipos .
+
+    $default  reduce using rule 11 (expresion)
+
+
+state 57
+
+   12 expresion: expresion MULTIPLICACION tipos .
+
+    $default  reduce using rule 12 (expresion)
+
+
+state 58
+
+   13 expresion: expresion DIVISION tipos .
+
+    $default  reduce using rule 13 (expresion)
+
+
+state 59
+
+   14 expresion: expresion MAYOR_QUE tipos .
+
+    $default  reduce using rule 14 (expresion)
+
+
+state 60
+
+   16 expresion: expresion MENOR_QUE tipos .
+
+    $default  reduce using rule 16 (expresion)
+
+
+state 61
+
+   15 expresion: expresion MAYOR_IGUAL_QUE tipos .
+
+    $default  reduce using rule 15 (expresion)
+
+
+state 62
+
+   17 expresion: expresion MENOR_IGUAL_QUE tipos .
+
+    $default  reduce using rule 17 (expresion)
+
+
+state 63
+
+   18 expresion: expresion IGUAL_IGUAL tipos .
+
+    $default  reduce using rule 18 (expresion)
 
 
 state 64
 
-    3 sentencias: sentencias . sentencia
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . elif_clauses else_clause FIN_CONDICION
+   19 expresion: expresion NO_IGUAL tipos .
 
-    IMPRIMIR       shift, and go to state 1
-    WHILE          shift, and go to state 2
-    FOR_BUCLE      shift, and go to state 3
-    IF_CONDICION   shift, and go to state 4
-    IDENTIFICADOR  shift, and go to state 5
-
-    $default  reduce using rule 31 (elif_clauses)
-
-    sentencia     go to state 20
-    asignacion    go to state 9
-    imprimir      go to state 10
-    bucle_w       go to state 11
-    bucle_f       go to state 12
-    condicion_if  go to state 13
-    elif_clauses  go to state 67
+    $default  reduce using rule 19 (expresion)
 
 
 state 65
 
-   28 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE .
+   20 expresion: expresion AND tipos .
 
-    $default  reduce using rule 28 (bucle_w)
+    $default  reduce using rule 20 (expresion)
 
 
 state 66
 
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias FIN_FOR
+   21 expresion: expresion OR tipos .
 
-    DOSPUNTOS  shift, and go to state 68
+    $default  reduce using rule 21 (expresion)
 
 
 state 67
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses . else_clause FIN_CONDICION
-   32 elif_clauses: elif_clauses . ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
-
-    ELIF_CONDICION  shift, and go to state 69
-    ELSE_CONDICION  shift, and go to state 70
-
-    $default  reduce using rule 34 (else_clause)
-
-    else_clause  go to state 71
-
-
-state 68
-
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias FIN_FOR
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias FIN_BUCLE
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
@@ -919,36 +872,62 @@ state 68
     condicion_if  go to state 13
 
 
+state 68
+
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
+
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
+
+    expresion  go to state 73
+    tipos      go to state 27
+
+
 state 69
 
-   32 elif_clauses: elif_clauses ELIF_CONDICION . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias elif_clauses else_clause FIN_CONDICION
 
-    APERTURAPARENTESIS  shift, and go to state 73
+    IMPRIMIR       shift, and go to state 1
+    WHILE          shift, and go to state 2
+    FOR_BUCLE      shift, and go to state 3
+    IF_CONDICION   shift, and go to state 4
+    IDENTIFICADOR  shift, and go to state 5
+
+    sentencias    go to state 74
+    sentencia     go to state 8
+    asignacion    go to state 9
+    imprimir      go to state 10
+    bucle_w       go to state 11
+    bucle_f       go to state 12
+    condicion_if  go to state 13
 
 
 state 70
 
-   33 else_clause: ELSE_CONDICION . DOSPUNTOS sentencias
+   26 elements: elements COMA NUMERICO .
 
-    DOSPUNTOS  shift, and go to state 74
+    $default  reduce using rule 26 (elements)
 
 
 state 71
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause . FIN_CONDICION
+   22 expresion: IDENTIFICADOR APERTURACORCHETE expresion CIERRECORCHETE .
 
-    FIN_CONDICION  shift, and go to state 75
+    $default  reduce using rule 22 (expresion)
 
 
 state 72
 
     3 sentencias: sentencias . sentencia
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . FIN_FOR
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . FIN_BUCLE
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
+    FIN_BUCLE      shift, and go to state 75
     FOR_BUCLE      shift, and go to state 3
-    FIN_FOR        shift, and go to state 76
     IF_CONDICION   shift, and go to state 4
     IDENTIFICADOR  shift, and go to state 5
 
@@ -962,20 +941,39 @@ state 72
 
 state 73
 
-   32 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias
+   10 expresion: expresion . SUMA tipos
+   11          | expresion . RESTA tipos
+   12          | expresion . MULTIPLICACION tipos
+   13          | expresion . DIVISION tipos
+   14          | expresion . MAYOR_QUE tipos
+   15          | expresion . MAYOR_IGUAL_QUE tipos
+   16          | expresion . MENOR_QUE tipos
+   17          | expresion . MENOR_IGUAL_QUE tipos
+   18          | expresion . IGUAL_IGUAL tipos
+   19          | expresion . NO_IGUAL tipos
+   20          | expresion . AND tipos
+   21          | expresion . OR tipos
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR
 
-    NUMERICO         shift, and go to state 21
-    NUMERICODECIMAL  shift, and go to state 22
-    IDENTIFICADOR    shift, and go to state 23
-    CADENA           shift, and go to state 24
-
-    expresion  go to state 77
-    tipos      go to state 26
+    SUMA              shift, and go to state 35
+    RESTA             shift, and go to state 36
+    MULTIPLICACION    shift, and go to state 37
+    DIVISION          shift, and go to state 38
+    CIERREPARENTESIS  shift, and go to state 76
+    MAYOR_QUE         shift, and go to state 40
+    MENOR_QUE         shift, and go to state 41
+    MAYOR_IGUAL_QUE   shift, and go to state 42
+    MENOR_IGUAL_QUE   shift, and go to state 43
+    IGUAL_IGUAL       shift, and go to state 44
+    NO_IGUAL          shift, and go to state 45
+    AND               shift, and go to state 46
+    OR                shift, and go to state 47
 
 
 state 74
 
-   33 else_clause: ELSE_CONDICION DOSPUNTOS . sentencias
+    3 sentencias: sentencias . sentencia
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . elif_clauses else_clause FIN_CONDICION
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
@@ -983,7 +981,55 @@ state 74
     IF_CONDICION   shift, and go to state 4
     IDENTIFICADOR  shift, and go to state 5
 
-    sentencias    go to state 78
+    $default  reduce using rule 35 (elif_clauses)
+
+    sentencia     go to state 20
+    asignacion    go to state 9
+    imprimir      go to state 10
+    bucle_w       go to state 11
+    bucle_f       go to state 12
+    condicion_if  go to state 13
+    elif_clauses  go to state 77
+
+
+state 75
+
+   32 bucle_w: WHILE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_BUCLE .
+
+    $default  reduce using rule 32 (bucle_w)
+
+
+state 76
+
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias FIN_FOR
+
+    DOSPUNTOS  shift, and go to state 78
+
+
+state 77
+
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses . else_clause FIN_CONDICION
+   36 elif_clauses: elif_clauses . ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
+
+    ELIF_CONDICION  shift, and go to state 79
+    ELSE_CONDICION  shift, and go to state 80
+
+    $default  reduce using rule 38 (else_clause)
+
+    else_clause  go to state 81
+
+
+state 78
+
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias FIN_FOR
+
+    IMPRIMIR       shift, and go to state 1
+    WHILE          shift, and go to state 2
+    FOR_BUCLE      shift, and go to state 3
+    IF_CONDICION   shift, and go to state 4
+    IDENTIFICADOR  shift, and go to state 5
+
+    sentencias    go to state 82
     sentencia     go to state 8
     asignacion    go to state 9
     imprimir      go to state 10
@@ -992,21 +1038,95 @@ state 74
     condicion_if  go to state 13
 
 
-state 75
+state 79
 
-   30 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION .
+   36 elif_clauses: elif_clauses ELIF_CONDICION . APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias
 
-    $default  reduce using rule 30 (condicion_if)
-
-
-state 76
-
-   29 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR .
-
-    $default  reduce using rule 29 (bucle_f)
+    APERTURAPARENTESIS  shift, and go to state 83
 
 
-state 77
+state 80
+
+   37 else_clause: ELSE_CONDICION . DOSPUNTOS sentencias
+
+    DOSPUNTOS  shift, and go to state 84
+
+
+state 81
+
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause . FIN_CONDICION
+
+    FIN_CONDICION  shift, and go to state 85
+
+
+state 82
+
+    3 sentencias: sentencias . sentencia
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias . FIN_FOR
+
+    IMPRIMIR       shift, and go to state 1
+    WHILE          shift, and go to state 2
+    FOR_BUCLE      shift, and go to state 3
+    FIN_FOR        shift, and go to state 86
+    IF_CONDICION   shift, and go to state 4
+    IDENTIFICADOR  shift, and go to state 5
+
+    sentencia     go to state 20
+    asignacion    go to state 9
+    imprimir      go to state 10
+    bucle_w       go to state 11
+    bucle_f       go to state 12
+    condicion_if  go to state 13
+
+
+state 83
+
+   36 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS . expresion CIERREPARENTESIS DOSPUNTOS sentencias
+
+    APERTURACORCHETE  shift, and go to state 21
+    NUMERICO          shift, and go to state 22
+    NUMERICODECIMAL   shift, and go to state 23
+    IDENTIFICADOR     shift, and go to state 24
+    CADENA            shift, and go to state 25
+
+    expresion  go to state 87
+    tipos      go to state 27
+
+
+state 84
+
+   37 else_clause: ELSE_CONDICION DOSPUNTOS . sentencias
+
+    IMPRIMIR       shift, and go to state 1
+    WHILE          shift, and go to state 2
+    FOR_BUCLE      shift, and go to state 3
+    IF_CONDICION   shift, and go to state 4
+    IDENTIFICADOR  shift, and go to state 5
+
+    sentencias    go to state 88
+    sentencia     go to state 8
+    asignacion    go to state 9
+    imprimir      go to state 10
+    bucle_w       go to state 11
+    bucle_f       go to state 12
+    condicion_if  go to state 13
+
+
+state 85
+
+   34 condicion_if: IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION .
+
+    $default  reduce using rule 34 (condicion_if)
+
+
+state 86
+
+   33 bucle_f: FOR_BUCLE IDENTIFICADOR IN RANGE APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias FIN_FOR .
+
+    $default  reduce using rule 33 (bucle_f)
+
+
+state 87
 
    10 expresion: expresion . SUMA tipos
    11          | expresion . RESTA tipos
@@ -1020,27 +1140,27 @@ state 77
    19          | expresion . NO_IGUAL tipos
    20          | expresion . AND tipos
    21          | expresion . OR tipos
-   32 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias
+   36 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion . CIERREPARENTESIS DOSPUNTOS sentencias
 
-    SUMA              shift, and go to state 31
-    RESTA             shift, and go to state 32
-    MULTIPLICACION    shift, and go to state 33
-    DIVISION          shift, and go to state 34
-    CIERREPARENTESIS  shift, and go to state 79
-    MAYOR_QUE         shift, and go to state 36
-    MENOR_QUE         shift, and go to state 37
-    MAYOR_IGUAL_QUE   shift, and go to state 38
-    MENOR_IGUAL_QUE   shift, and go to state 39
-    IGUAL_IGUAL       shift, and go to state 40
-    NO_IGUAL          shift, and go to state 41
-    AND               shift, and go to state 42
-    OR                shift, and go to state 43
+    SUMA              shift, and go to state 35
+    RESTA             shift, and go to state 36
+    MULTIPLICACION    shift, and go to state 37
+    DIVISION          shift, and go to state 38
+    CIERREPARENTESIS  shift, and go to state 89
+    MAYOR_QUE         shift, and go to state 40
+    MENOR_QUE         shift, and go to state 41
+    MAYOR_IGUAL_QUE   shift, and go to state 42
+    MENOR_IGUAL_QUE   shift, and go to state 43
+    IGUAL_IGUAL       shift, and go to state 44
+    NO_IGUAL          shift, and go to state 45
+    AND               shift, and go to state 46
+    OR                shift, and go to state 47
 
 
-state 78
+state 88
 
     3 sentencias: sentencias . sentencia
-   33 else_clause: ELSE_CONDICION DOSPUNTOS sentencias .
+   37 else_clause: ELSE_CONDICION DOSPUNTOS sentencias .
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
@@ -1048,7 +1168,7 @@ state 78
     IF_CONDICION   shift, and go to state 4
     IDENTIFICADOR  shift, and go to state 5
 
-    $default  reduce using rule 33 (else_clause)
+    $default  reduce using rule 37 (else_clause)
 
     sentencia     go to state 20
     asignacion    go to state 9
@@ -1058,16 +1178,16 @@ state 78
     condicion_if  go to state 13
 
 
-state 79
+state 89
 
-   32 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias
+   36 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS . DOSPUNTOS sentencias
 
-    DOSPUNTOS  shift, and go to state 80
+    DOSPUNTOS  shift, and go to state 90
 
 
-state 80
+state 90
 
-   32 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias
+   36 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS . sentencias
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
@@ -1075,7 +1195,7 @@ state 80
     IF_CONDICION   shift, and go to state 4
     IDENTIFICADOR  shift, and go to state 5
 
-    sentencias    go to state 81
+    sentencias    go to state 91
     sentencia     go to state 8
     asignacion    go to state 9
     imprimir      go to state 10
@@ -1084,10 +1204,10 @@ state 80
     condicion_if  go to state 13
 
 
-state 81
+state 91
 
     3 sentencias: sentencias . sentencia
-   32 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias .
+   36 elif_clauses: elif_clauses ELIF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias .
 
     IMPRIMIR       shift, and go to state 1
     WHILE          shift, and go to state 2
@@ -1095,7 +1215,7 @@ state 81
     IF_CONDICION   shift, and go to state 4
     IDENTIFICADOR  shift, and go to state 5
 
-    $default  reduce using rule 32 (elif_clauses)
+    $default  reduce using rule 36 (elif_clauses)
 
     sentencia     go to state 20
     asignacion    go to state 9
