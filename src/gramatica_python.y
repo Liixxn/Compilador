@@ -610,7 +610,7 @@ tipos:
 //I --> imprimir ( E ) 
 imprimir: 
     IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS { 
-        printf("> [SENTENCIA] - Imprimireee\n");
+        printf("> [SENTENCIA] - Imprimir\n");
 
         $$.n = crearNodoNoTerminal($3.n, crearNodoVacio(), 4);
 
