@@ -83,7 +83,6 @@ int array_count = 0;
 //X --> S
 codigo:
     sentencias  {
-        printf("$1: %d\n", $1.n->tipoNodo);
         comprobarAST($1.n); 
         printf("\n[FINALIZADO]\n");     
     }
@@ -101,7 +100,7 @@ sentencias:
 //PRODUCCION "sentencia", puede estar formado por asignaciones, condicionales, bucles whiles, imprimir
 //D --> A | I 
 sentencia:   //Por defecto bison, asigna $1 a $$ por lo que no es obligatoria realizar la asignacion
-    asignacion              
+    asignacion                  
     | imprimir      
     | bucle_w       
     | bucle_f       
@@ -151,12 +150,8 @@ asignacion:
             printf("Asignado el valor %d a la variable\n", $3.miarray->valores[1]);
             tabla[indice].nombre = $1; 
             tabla[indice].tipo = tipos[4];
-            printf("Array DETEEEEECTED: of size %d\n", $3.miarray->valores);
             tabla[indice].arrayNumerico = $3.miarray->valores;
             tabla[indice].tamano = $3.miarray->size;
-
-
-            printf("\nEl registro que es donde esta guardado su dato es: %d\n", $3.n->resultado);
             tabla[indice].registro = $3.n->resultado;
 
             indice++;
@@ -169,7 +164,7 @@ asignacion:
         }
         
         $$.n=crearNodoNoTerminal($3.n, crearNodoVacio(), 5);
-        printf("Numero linea asignacion %d\n", num_linea);
+        
 
     }
 ;
@@ -214,7 +209,12 @@ expresion:
             
             $$.n = crearNodoNoTerminal($1.n, $3.n, 2);
             $$.n->tipo = tipos[2];
+
+            
             $$.tipo = tipos[2];
+
+            $$.n->valorNodo.valorString = cadenaUnificada;
+            $$.texto = cadenaUnificada;
 
             // variables[$$.n->resultado].texto = cadenaUnificada;
             // variables[$$.n->resultado].nombre = $$.n->nombreVar;
@@ -232,7 +232,6 @@ expresion:
             printf("Error en la linea %d\n", num_linea);
         }
 
-        printf("Numero linea suma %d\n", num_linea);
     }
     //RESTA
     | expresion RESTA tipos {
@@ -484,11 +483,9 @@ expresion:
     // POSICION DEL ARRAY
     | IDENTIFICADOR APERTURACORCHETE expresion CIERRECORCHETE {
         printf("> [OPERACION] - GUARDAR POSICION DEL ARRAY \n");
-        printf("Nombre del aRRRRRy: %s\n", $1);
         int pos = buscarTabla(indice, $1, tabla);
-        printf("Posicioooon encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
+        printf("Posicion encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
         // int *arrayEncontrado = tabla[pos].arrayNumerico;
-        printf("POSICION DEL ARRAY ENCONTRADAAAAA: %d\n", tabla[pos].arrayNumerico[$3.numerico+1]);
 
         $$.tipo = tipos[0];
         $$.numerico = tabla[pos].arrayNumerico[$3.numerico+1];
@@ -498,19 +495,17 @@ expresion:
 
     //PARA ARRAY
     | APERTURACORCHETE elements CIERRECORCHETE {
-        printf("> [OPERACION] - CORCHETES - ARRAY \n");
+        printf("> [OPERACION] - ARRAY \n");
         arrays[array_count].valores = $2;
         arrays[array_count].size = $2[0];
 
-        printf("Array detected: of size %d\n", $2[0]);
+        printf("Array detectado de tamanio %d\n", $2[0]);
         for (int i = 1; i <= $2[0]; i++) {
             printf("%d ", $2[i]);
         }
         printf("\n");
         $$.tipo = tipos[4];
         $$.miarray = &arrays[array_count];
-        printf("TAMANO DEL ARRAY %d\n", $$.miarray->size);
-        printf("PASO EL TIPO 4 PaaaaaaaaaaaaaaaA arribaaaaaaa DEFINI ARRAY COMO PARTE DEL NODO\n");
         $$.n = crearNodoTerminalArray($$.miarray->valores, tipos[4]);
         array_count++;  // Incrementamos el contador de arrays
         
@@ -524,12 +519,10 @@ expresion:
 elements:
     /* Handle an array of numbers */
     NUMERICO {
-        printf("NUMero unooooo: %d\n", $1);
         int* array = malloc(2 * sizeof(int));
         array[0] = 1;
         array[1] = $1;
         $$ = array;
-        printf("NUMero unooOOOOOOOOOOOOOOOOOOOOOOOooo: %d\n", $$[1]);
     }
     | elements COMA NUMERICO {
         int* array = realloc($1, ($1[0] + 2) * sizeof(int));
@@ -617,9 +610,21 @@ tipos:
 //I --> imprimir ( E ) 
 imprimir: 
     IMPRIMIR APERTURAPARENTESIS expresion CIERREPARENTESIS { 
-        printf("> [SENTENCIA] - Imprimir\n");
-        $$.n = crearNodoNoTerminal($3.n, crearNodoVacio(), 4);        
-        printf("Numero linea imprimir %d\n", num_linea);
+        printf("> [SENTENCIA] - Imprimireee\n");
+
+        $$.n = crearNodoNoTerminal($3.n, crearNodoVacio(), 4);
+
+        if (strcmp($3.n->tipo, "numerico") == 0) {
+            printf("Resultado del print es: %.0f\n", $$.n->izq->valorNodo.valorDouble);
+        } else if (strcmp($3.n->tipo, "numericoDecimal") == 0) {
+            printf("Resultado del print es: %.3f\n", $$.n->izq->valorNodo.valorDouble);
+        } else if (strcmp($3.n->tipo, "texto") == 0) {
+            printf("Resultado del print es: %s\n", $$.n->izq->valorNodo.valorString);
+        } else if (strcmp($3.n->tipo, "array") == 0) {
+            printf("Resultado del print es: %d\n", $$.n->izq->valorNodo.array);
+        }
+        
+    
     }
 ;
 
@@ -652,7 +657,6 @@ bucle_f:
 condicion_if:
     IF_CONDICION APERTURAPARENTESIS expresion CIERREPARENTESIS DOSPUNTOS sentencias elif_clauses else_clause FIN_CONDICION {
         printf("> [SENTENCIA] - Condicion If\n");
-        printf("El resultado es: %d\n", $3.numerico);
         if($3.numerico == 1){
             $$.n = crearNodoNoTerminal($6.n, crearNodoVacio(), 7); // 7 is the number for if
         } else if ($7.numerico == 1) {

@@ -959,7 +959,7 @@ case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
 #line 47 "src/lexico_python.flex"
-
+{ int num_newlines = 0; char *p; for (p = yytext; *p; p++) { if (*p == '\n') { num_newlines++; } } int old_number = num_linea; num_linea += num_newlines; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
@@ -984,13 +984,13 @@ YY_RULE_SETUP
 case 36:
 YY_RULE_SETUP
 #line 53 "src/lexico_python.flex"
-{yylval.stringVal = strdup(yytext); printf(yytext);return IDENTIFICADOR;}
+{yylval.stringVal = strdup(yytext); return IDENTIFICADOR;}
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
 #line 56 "src/lexico_python.flex"
-{ num_linea++;}
+{ printf("\n--------------- Numero de linea %d ----------------\n\n", num_linea); num_linea++;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP

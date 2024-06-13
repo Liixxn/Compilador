@@ -506,10 +506,10 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    85,    85,    95,    96,   104,   105,   106,   107,   108,
-     115,   184,   238,   261,   284,   307,   330,   353,   376,   398,
-     420,   450,   468,   485,   500,   519,   526,   534,   553,   584,
-     595,   605,   619,   631,   642,   653,   667,   670,   680,   683
+       0,    85,    85,    94,    95,   103,   104,   105,   106,   107,
+     114,   179,   237,   260,   283,   306,   329,   352,   375,   397,
+     419,   449,   467,   484,   497,   514,   521,   527,   546,   577,
+     588,   598,   612,   636,   647,   658,   671,   674,   684,   687
 };
 #endif
 
@@ -1504,7 +1504,6 @@ yyreduce:
 /* Line 1464 of yacc.c  */
 #line 85 "src/gramatica_python.y"
     {
-        printf("$1: %d\n", (yyvsp[(1) - (1)].tr).n->tipoNodo);
         comprobarAST((yyvsp[(1) - (1)].tr).n); 
         printf("\n[FINALIZADO]\n");     
     ;}
@@ -1513,14 +1512,14 @@ yyreduce:
   case 3:
 
 /* Line 1464 of yacc.c  */
-#line 95 "src/gramatica_python.y"
+#line 94 "src/gramatica_python.y"
     { (yyval.tr) = (yyvsp[(1) - (1)].tr); ;}
     break;
 
   case 4:
 
 /* Line 1464 of yacc.c  */
-#line 96 "src/gramatica_python.y"
+#line 95 "src/gramatica_python.y"
     { //para hacerlo recursivo
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (2)].tr).n, (yyvsp[(2) - (2)].tr).n, 7);
     ;}
@@ -1529,7 +1528,7 @@ yyreduce:
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 115 "src/gramatica_python.y"
+#line 114 "src/gramatica_python.y"
     {
         printf("> [SENTENCIA] - Asignacion\n");
 
@@ -1569,12 +1568,8 @@ yyreduce:
             printf("Asignado el valor %d a la variable\n", (yyvsp[(3) - (3)].tr).miarray->valores[1]);
             tabla[indice].nombre = (yyvsp[(1) - (3)].stringVal); 
             tabla[indice].tipo = tipos[4];
-            printf("Array DETEEEEECTED: of size %d\n", (yyvsp[(3) - (3)].tr).miarray->valores);
             tabla[indice].arrayNumerico = (yyvsp[(3) - (3)].tr).miarray->valores;
             tabla[indice].tamano = (yyvsp[(3) - (3)].tr).miarray->size;
-
-
-            printf("\nEl registro que es donde esta guardado su dato es: %d\n", (yyvsp[(3) - (3)].tr).n->resultado);
             tabla[indice].registro = (yyvsp[(3) - (3)].tr).n->resultado;
 
             indice++;
@@ -1587,7 +1582,7 @@ yyreduce:
         }
         
         (yyval.tr).n=crearNodoNoTerminal((yyvsp[(3) - (3)].tr).n, crearNodoVacio(), 5);
-        printf("Numero linea asignacion %d\n", num_linea);
+        
 
     ;}
     break;
@@ -1595,7 +1590,7 @@ yyreduce:
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 184 "src/gramatica_python.y"
+#line 179 "src/gramatica_python.y"
     {
 
         //Suma de numerico + numerico
@@ -1629,7 +1624,12 @@ yyreduce:
             
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(1) - (3)].tr).n, (yyvsp[(3) - (3)].tr).n, 2);
             (yyval.tr).n->tipo = tipos[2];
+
+            
             (yyval.tr).tipo = tipos[2];
+
+            (yyval.tr).n->valorNodo.valorString = cadenaUnificada;
+            (yyval.tr).texto = cadenaUnificada;
 
             // variables[$$.n->resultado].texto = cadenaUnificada;
             // variables[$$.n->resultado].nombre = $$.n->nombreVar;
@@ -1647,14 +1647,13 @@ yyreduce:
             printf("Error en la linea %d\n", num_linea);
         }
 
-        printf("Numero linea suma %d\n", num_linea);
     ;}
     break;
 
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 238 "src/gramatica_python.y"
+#line 237 "src/gramatica_python.y"
     {
         
         //Resta de numerico - numerico
@@ -1682,7 +1681,7 @@ yyreduce:
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 261 "src/gramatica_python.y"
+#line 260 "src/gramatica_python.y"
     {
         
         //Multiplicación de numerico * numerico
@@ -1710,7 +1709,7 @@ yyreduce:
   case 14:
 
 /* Line 1464 of yacc.c  */
-#line 284 "src/gramatica_python.y"
+#line 283 "src/gramatica_python.y"
     {
         
         //DIVISION de numerico * numerico
@@ -1738,7 +1737,7 @@ yyreduce:
   case 15:
 
 /* Line 1464 of yacc.c  */
-#line 307 "src/gramatica_python.y"
+#line 306 "src/gramatica_python.y"
     {
         
         //MAYOR_QUE de numerico > numerico
@@ -1766,7 +1765,7 @@ yyreduce:
   case 16:
 
 /* Line 1464 of yacc.c  */
-#line 330 "src/gramatica_python.y"
+#line 329 "src/gramatica_python.y"
     {
         
         //MAYOR_IGUAL_QUE de numerico > numerico
@@ -1794,7 +1793,7 @@ yyreduce:
   case 17:
 
 /* Line 1464 of yacc.c  */
-#line 353 "src/gramatica_python.y"
+#line 352 "src/gramatica_python.y"
     {
         
         //MENOR_QUE de numerico > numerico
@@ -1822,7 +1821,7 @@ yyreduce:
   case 18:
 
 /* Line 1464 of yacc.c  */
-#line 376 "src/gramatica_python.y"
+#line 375 "src/gramatica_python.y"
     {
         
         //MENOR_IGUAL_QUE de numerico > numerico
@@ -1850,7 +1849,7 @@ yyreduce:
   case 19:
 
 /* Line 1464 of yacc.c  */
-#line 398 "src/gramatica_python.y"
+#line 397 "src/gramatica_python.y"
     {
         
         //IGUAL_IGUAL de numerico == numerico
@@ -1878,7 +1877,7 @@ yyreduce:
   case 20:
 
 /* Line 1464 of yacc.c  */
-#line 420 "src/gramatica_python.y"
+#line 419 "src/gramatica_python.y"
     {
         
         //NO_IGUAL de numerico != numerico
@@ -1913,7 +1912,7 @@ yyreduce:
   case 21:
 
 /* Line 1464 of yacc.c  */
-#line 450 "src/gramatica_python.y"
+#line 449 "src/gramatica_python.y"
     {
             
             //AND de numerico > numerico
@@ -1936,7 +1935,7 @@ yyreduce:
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 468 "src/gramatica_python.y"
+#line 467 "src/gramatica_python.y"
     {
             
             //OR de numerico > numerico
@@ -1958,14 +1957,12 @@ yyreduce:
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 485 "src/gramatica_python.y"
+#line 484 "src/gramatica_python.y"
     {
         printf("> [OPERACION] - GUARDAR POSICION DEL ARRAY \n");
-        printf("Nombre del aRRRRRy: %s\n", (yyvsp[(1) - (4)].stringVal));
         int pos = buscarTabla(indice, (yyvsp[(1) - (4)].stringVal), tabla);
-        printf("Posicioooon encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
+        printf("Posicion encontrada en la tabla : %d con el nombre de %s\n", pos, tabla[pos].nombre);
         // int *arrayEncontrado = tabla[pos].arrayNumerico;
-        printf("POSICION DEL ARRAY ENCONTRADAAAAA: %d\n", tabla[pos].arrayNumerico[(yyvsp[(3) - (4)].tr).numerico+1]);
 
         (yyval.tr).tipo = tipos[0];
         (yyval.tr).numerico = tabla[pos].arrayNumerico[(yyvsp[(3) - (4)].tr).numerico+1];
@@ -1976,21 +1973,19 @@ yyreduce:
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 500 "src/gramatica_python.y"
+#line 497 "src/gramatica_python.y"
     {
-        printf("> [OPERACION] - CORCHETES - ARRAY \n");
+        printf("> [OPERACION] - ARRAY \n");
         arrays[array_count].valores = (yyvsp[(2) - (3)].valores);
         arrays[array_count].size = (yyvsp[(2) - (3)].valores)[0];
 
-        printf("Array detected: of size %d\n", (yyvsp[(2) - (3)].valores)[0]);
+        printf("Array detectado de tamanio %d\n", (yyvsp[(2) - (3)].valores)[0]);
         for (int i = 1; i <= (yyvsp[(2) - (3)].valores)[0]; i++) {
             printf("%d ", (yyvsp[(2) - (3)].valores)[i]);
         }
         printf("\n");
         (yyval.tr).tipo = tipos[4];
         (yyval.tr).miarray = &arrays[array_count];
-        printf("TAMANO DEL ARRAY %d\n", (yyval.tr).miarray->size);
-        printf("PASO EL TIPO 4 PaaaaaaaaaaaaaaaA arribaaaaaaa DEFINI ARRAY COMO PARTE DEL NODO\n");
         (yyval.tr).n = crearNodoTerminalArray((yyval.tr).miarray->valores, tipos[4]);
         array_count++;  // Incrementamos el contador de arrays
         
@@ -2000,28 +1995,26 @@ yyreduce:
   case 25:
 
 /* Line 1464 of yacc.c  */
-#line 519 "src/gramatica_python.y"
+#line 514 "src/gramatica_python.y"
     {(yyval.tr) = (yyvsp[(1) - (1)].tr);;}
     break;
 
   case 26:
 
 /* Line 1464 of yacc.c  */
-#line 526 "src/gramatica_python.y"
+#line 521 "src/gramatica_python.y"
     {
-        printf("NUMero unooooo: %d\n", (yyvsp[(1) - (1)].enteroVal));
         int* array = malloc(2 * sizeof(int));
         array[0] = 1;
         array[1] = (yyvsp[(1) - (1)].enteroVal);
         (yyval.valores) = array;
-        printf("NUMero unooOOOOOOOOOOOOOOOOOOOOOOOooo: %d\n", (yyval.valores)[1]);
     ;}
     break;
 
   case 27:
 
 /* Line 1464 of yacc.c  */
-#line 534 "src/gramatica_python.y"
+#line 527 "src/gramatica_python.y"
     {
         int* array = realloc((yyvsp[(1) - (3)].valores), ((yyvsp[(1) - (3)].valores)[0] + 2) * sizeof(int));
         array[0]++;
@@ -2033,7 +2026,7 @@ yyreduce:
   case 28:
 
 /* Line 1464 of yacc.c  */
-#line 553 "src/gramatica_python.y"
+#line 546 "src/gramatica_python.y"
     {
         printf(" IDENTIFICADOR %s\n",(yyvsp[(1) - (1)].stringVal));
         //Buscamos en la tabla el identificador
@@ -2068,7 +2061,7 @@ yyreduce:
   case 29:
 
 /* Line 1464 of yacc.c  */
-#line 584 "src/gramatica_python.y"
+#line 577 "src/gramatica_python.y"
     {
         (yyval.tr).numerico = (yyvsp[(1) - (1)].enteroVal);
         printf("\n> [TIPO] - Numerico Positivo: %d\n", (yyval.tr).numerico);
@@ -2083,7 +2076,7 @@ yyreduce:
   case 30:
 
 /* Line 1464 of yacc.c  */
-#line 595 "src/gramatica_python.y"
+#line 588 "src/gramatica_python.y"
     {
         (yyval.tr).numericoDecimal = (yyvsp[(1) - (1)].realVal);
         printf("\n> [TIPO] - NumericoDecimal: %.3f\n", (yyval.tr).numericoDecimal); 
@@ -2097,7 +2090,7 @@ yyreduce:
   case 31:
 
 /* Line 1464 of yacc.c  */
-#line 605 "src/gramatica_python.y"
+#line 598 "src/gramatica_python.y"
     {
         (yyval.tr).texto = (yyvsp[(1) - (1)].cadenaVal);
         printf("\n> [TIPO] - Cadena de texto: %s\n", (yyvsp[(1) - (1)].cadenaVal));
@@ -2111,18 +2104,30 @@ yyreduce:
   case 32:
 
 /* Line 1464 of yacc.c  */
-#line 619 "src/gramatica_python.y"
+#line 612 "src/gramatica_python.y"
     { 
-        printf("> [SENTENCIA] - Imprimir\n");
-        (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (4)].tr).n, crearNodoVacio(), 4);        
-        printf("Numero linea imprimir %d\n", num_linea);
+        printf("> [SENTENCIA] - Imprimireee\n");
+
+        (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (4)].tr).n, crearNodoVacio(), 4);
+
+        if (strcmp((yyvsp[(3) - (4)].tr).n->tipo, "numerico") == 0) {
+            printf("Resultado del print es: %.0f\n", (yyval.tr).n->izq->valorNodo.valorDouble);
+        } else if (strcmp((yyvsp[(3) - (4)].tr).n->tipo, "numericoDecimal") == 0) {
+            printf("Resultado del print es: %.3f\n", (yyval.tr).n->izq->valorNodo.valorDouble);
+        } else if (strcmp((yyvsp[(3) - (4)].tr).n->tipo, "texto") == 0) {
+            printf("Resultado del print es: %s\n", (yyval.tr).n->izq->valorNodo.valorString);
+        } else if (strcmp((yyvsp[(3) - (4)].tr).n->tipo, "array") == 0) {
+            printf("Resultado del print es: %d\n", (yyval.tr).n->izq->valorNodo.array);
+        }
+        
+    
     ;}
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 631 "src/gramatica_python.y"
+#line 636 "src/gramatica_python.y"
     {
         printf("> [SENTENCIA] - Bucle While\n");
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (7)].tr).n, (yyvsp[(6) - (7)].tr).n, 21); // 21 es el numero del while
@@ -2132,7 +2137,7 @@ yyreduce:
   case 34:
 
 /* Line 1464 of yacc.c  */
-#line 642 "src/gramatica_python.y"
+#line 647 "src/gramatica_python.y"
     {
         printf("> [SENTENCIA] - Bucle For\n");
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(6) - (10)].tr).n, (yyvsp[(9) - (10)].tr).n, 22); // 22 es el numero del for
@@ -2142,10 +2147,9 @@ yyreduce:
   case 35:
 
 /* Line 1464 of yacc.c  */
-#line 653 "src/gramatica_python.y"
+#line 658 "src/gramatica_python.y"
     {
         printf("> [SENTENCIA] - Condicion If\n");
-        printf("El resultado es: %d\n", (yyvsp[(3) - (9)].tr).numerico);
         if((yyvsp[(3) - (9)].tr).numerico == 1){
             (yyval.tr).n = crearNodoNoTerminal((yyvsp[(6) - (9)].tr).n, crearNodoVacio(), 7); // 7 is the number for if
         } else if ((yyvsp[(7) - (9)].tr).numerico == 1) {
@@ -2159,7 +2163,7 @@ yyreduce:
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 667 "src/gramatica_python.y"
+#line 671 "src/gramatica_python.y"
     {
         (yyval.tr).numerico = 0;
     ;}
@@ -2168,7 +2172,7 @@ yyreduce:
   case 37:
 
 /* Line 1464 of yacc.c  */
-#line 670 "src/gramatica_python.y"
+#line 674 "src/gramatica_python.y"
     {
         printf("> [SENTENCIA] - Condicion Elif\n");
         if((yyvsp[(4) - (7)].tr).numerico == 1){
@@ -2181,7 +2185,7 @@ yyreduce:
   case 38:
 
 /* Line 1464 of yacc.c  */
-#line 680 "src/gramatica_python.y"
+#line 684 "src/gramatica_python.y"
     {
         (yyval.tr).n = (yyvsp[(3) - (3)].tr).n;
     ;}
@@ -2190,7 +2194,7 @@ yyreduce:
   case 39:
 
 /* Line 1464 of yacc.c  */
-#line 683 "src/gramatica_python.y"
+#line 687 "src/gramatica_python.y"
     {
         (yyval.tr).n = crearNodoVacio();
     ;}
@@ -2199,7 +2203,7 @@ yyreduce:
 
 
 /* Line 1464 of yacc.c  */
-#line 2203 "src/gramatica_python.tab.c"
+#line 2207 "src/gramatica_python.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2411,7 +2415,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 692 "src/gramatica_python.y"
+#line 696 "src/gramatica_python.y"
  
 
 //--------------------------------------------------- METODO MAIN -----------------------------------------------
