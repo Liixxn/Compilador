@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "tabla_simbolos.h"
-#include "AST_latino.h"
+#include "AST_python.h"
 
 // ----------------------------- DECLARACION DE VARIABLES Y ESTRUCTURAS -------------------------------------------
 
@@ -148,8 +148,7 @@ asignacion:
         }
         //Para crear un nuevo simbolo de tipo array
         else if (strcmp($3.tipo, tipos[4]) == 0){ //comprobacion si es array
-            printf("Asignado el valoooor %d a la variable\n", $3.miarray->valores[1]);
-            printf("\nNombre de la variable gramatica_latino: %s\n", $1);
+            printf("Asignado el valor %d a la variable\n", $3.miarray->valores[1]);
             tabla[indice].nombre = $1; 
             tabla[indice].tipo = tipos[4];
             printf("Array DETEEEEECTED: of size %d\n", $3.miarray->valores);
@@ -161,7 +160,6 @@ asignacion:
             tabla[indice].registro = $3.n->resultado;
 
             indice++;
-            printf("Array deeeeeeeeeeeeeeetected\n");
         }
 
         // Control de errores
@@ -696,7 +694,7 @@ else_clause:
 //--------------------------------------------------- METODO MAIN -----------------------------------------------
 int main(int argc, char** argv) {
     yyin = fopen(argv[1], "rt");            //Apertura del archivo codigo.python
-    yyout = fopen( "./latino.asm", "wt" );  //Para el archivo .ASM con nombre "python.asm"
+    yyout = fopen( "pruebas/python.asm", "wt" );  //Para el archivo .ASM con nombre "python.asm"
 	yyparse();
     fclose(yyin);
     return 0;

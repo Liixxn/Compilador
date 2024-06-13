@@ -1,0 +1,3 @@
+
+mul = "Prueba" * 5
+print(mul)

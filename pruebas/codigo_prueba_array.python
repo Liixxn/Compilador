@@ -1,0 +1,6 @@
+num = 5
+miarray = [9, 5, 8, 10, 5]
+print(num)
+numero = miarray[3]
+
+print(numero)

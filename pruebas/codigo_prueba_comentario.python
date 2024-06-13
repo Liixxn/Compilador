@@ -1,0 +1,10 @@
+# suma = 8
+
+"""
+suma = "hola"
+
+print(suma)
+"""
+suma = "Adios"
+
+print(suma)

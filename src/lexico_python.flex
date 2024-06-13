@@ -1,7 +1,7 @@
 %option noyywrap
 
 %{
-#include "gramatica_latino.tab.h"
+#include "gramatica_python.tab.h"
 extern YYSTYPE yylval;
 int num_linea = 1; 
 %}

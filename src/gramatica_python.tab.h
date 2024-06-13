@@ -83,7 +83,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1685 of yacc.c  */
-#line 34 "gramatica_latino.y"
+#line 34 "src/gramatica_python.y"
 
   int enteroVal;
   float realVal;
@@ -102,7 +102,7 @@ typedef union YYSTYPE
 
 
 /* Line 1685 of yacc.c  */
-#line 106 "gramatica_latino.tab.h"
+#line 106 "src/gramatica_python.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
