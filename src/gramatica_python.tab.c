@@ -1631,10 +1631,10 @@ yyreduce:
             (yyval.tr).n->tipo = tipos[2];
             (yyval.tr).tipo = tipos[2];
 
-            variables[(yyval.tr).n->resultado].texto = cadenaUnificada;
-            variables[(yyval.tr).n->resultado].nombre = (yyval.tr).n->nombreVar;
-            variables[(yyval.tr).n->resultado].registro = (yyval.tr).n->resultado;
-            variables[(yyval.tr).n->resultado].disponible = true;
+            // variables[$$.n->resultado].texto = cadenaUnificada;
+            // variables[$$.n->resultado].nombre = $$.n->nombreVar;
+            // variables[$$.n->resultado].registro = $$.n->resultado;
+            // variables[$$.n->resultado].disponible = true;
 
             // for (int i = 0; i < 64; i++){
             //     printf("\nValor de las variable en la posicion %d: %s\n", i, variables[i].texto);

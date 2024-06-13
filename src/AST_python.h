@@ -10,11 +10,13 @@ int contadorEtiqueta = 0;         // Variable para el control de las etiquetas
 int numMaxRegistros = 32;         // Variable que indica el numero maximo de registros disponibles
 int nombreVariable = 0;           // Almacena el entero que se asociará al nombre de la variable
 int contadorRegistrosCadenas = 0;
-int numMaxRegistrosCadenas = 7;   // Variable que indica el numero maximo de registros disponibles para cadenas
+int numMaxRegistrosCadenas = 6;   // Variable que indica el numero maximo de registros disponibles para cadenas
 
 //Por defecto, tenemos 32 registros de tipo f para controlar los registros libres (true) o ocupados (false)
 bool registros[32] = {[0 ... 29] = true, [30 ... 31] = true}; // Los registros 30 y 31 están reservados por defecto para imprimir por pantalla
-bool registroString[7] = {[0 ... 6] = true};
+bool registroString[6] = {[0 ... 5] = true};
+
+bool concatenacionCadena = false;
 
 // Estructura variable, se hará uso de la misma para almacenar y imprimir las variables del codigo python
 struct variable {
@@ -74,10 +76,10 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
     if (strcmp(n->tipo, "texto") == 0) {
       dato.texto = n->valorNodo.valorString;
 
-      int registro = encontrarRegString();
+      fprintf(yyout, "la $t%d, var_%d\n", n->resultado, n->nombreVar);
 
-      fprintf(yyout, "la $t%d, var_%d\n", registro, n->nombreVar);
-      contadorRegistrosCadenas++;
+      //contadorRegistrosCadenas = n->resultado+1;
+
     } else if (strcmp(n->tipo, "numerico") == 0) {
       dato.valor = n->valorNodo.valorDouble;
       fprintf(yyout, "lwc1 $f%d, var_%d\n", n->resultado, n->nombreVar);
@@ -104,9 +106,35 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
       strcpy(dato.texto, izqString);
       strcat(dato.texto, dchaString);
 
-      // fprintf(yyout, "la $a0, var_%d\n", n->izq->nombreVar);
-      // fprintf(yyout, "la $a1, var_%d\n", n->dcha->nombreVar);
+      // registro t6 para el puntero de la cadena
+      fprintf(yyout, "la $s0, resultado\n");
+      
 
+      fprintf(yyout, "cadena_%d: \n", n->izq->resultado);
+      fprintf(yyout, "  lb $s1, 0($t%d)\n", n->izq->resultado);
+      fprintf(yyout, "  beqz $s1, finCadena_%d\n", n->izq->resultado);
+      fprintf(yyout, "  sb $s1, 0($s0)\n");
+      fprintf(yyout, "  addi $s0, $s0, 1\n");
+      fprintf(yyout, "  addi $t%d, $t%d, 1\n", n->izq->resultado, n->izq->resultado);
+      fprintf(yyout, "  j cadena_%d\n", n->izq->resultado);
+
+
+      fprintf(yyout, "finCadena_%d: \n", n->izq->resultado);
+      fprintf(yyout, "  la $t%d, var_%d\n", n->dcha->resultado, n->dcha->resultado);
+
+
+      fprintf(yyout, "cadena_%d: \n", n->dcha->resultado);
+      fprintf(yyout, "  lb $s1, 0($t%d)\n", n->dcha->resultado);
+      fprintf(yyout, "  beqz $s1, fin_%d\n", n->dcha->resultado);
+      fprintf(yyout, "  sb $s1, 0($s0)\n");
+      fprintf(yyout, "  addi $s0, $s0, 1\n");
+      fprintf(yyout, "  addi $t%d, $t%d, 1\n", n->dcha->resultado, n->dcha->resultado);
+      fprintf(yyout, "  j cadena_%d\n", n->dcha->resultado);
+
+      fprintf(yyout, "fin_%d: \n", n->dcha->resultado); 
+      fprintf(yyout, "  sb $zero, 0($s0)\n"); //Fin de la cadena
+
+      concatenacionCadena = true;
 
     }
      else if (strcmp(n->tipo, "numerico") == 0) {
@@ -384,8 +412,14 @@ funcionImprimir(struct ast *n)
 {
 
   if (strcmp(n->tipo, "texto") == 0) {
+
     fprintf(yyout, "li $v0, 4\n");
-    fprintf(yyout, "la $a0, var_%d\n", n->resultado); // Mover del registro n al registro 30 (es el que empleamos para imprimir)
+
+    if (concatenacionCadena == true) {
+      fprintf(yyout, "la $a0, resultado\n");
+    } else {
+      fprintf(yyout, "la $a0, var_%d\n", n->resultado); // Mover del registro n al registro 30 (es el que empleamos para imprimir)
+    }
     fprintf(yyout, "addi $v0, $0, 4  #Movemos el registro 12 al 30 iniciado a false\n");
     fprintf(yyout, "syscall #Llamada al sistema\n");
     saltoLinea();
@@ -414,6 +448,7 @@ imprimirVariables(){
   fprintf(yyout, "saltoLinea: .asciiz \"\\n\"\n"); //Variable salto de linea
   fprintf(yyout, "zero: .float 0.0\n"); //Se inserta una variable auxiliar var_0 con valor 0.000
   fprintf(yyout, "uno: .float 1.0\n"); //Se inserta una variable auxiliar var_1 con valor 1.000
+  fprintf(yyout, "resultado: .space 100\n"); //Se inserta una variable auxiliar resultado para la concatenacion
   //Bucle que recorre el array de variables y las imprime en el archivo .asm
   for (int i = 0; i < 64; i++) {
       if(variables[i].disponible == true){

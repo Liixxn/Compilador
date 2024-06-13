@@ -216,10 +216,10 @@ expresion:
             $$.n->tipo = tipos[2];
             $$.tipo = tipos[2];
 
-            variables[$$.n->resultado].texto = cadenaUnificada;
-            variables[$$.n->resultado].nombre = $$.n->nombreVar;
-            variables[$$.n->resultado].registro = $$.n->resultado;
-            variables[$$.n->resultado].disponible = true;
+            // variables[$$.n->resultado].texto = cadenaUnificada;
+            // variables[$$.n->resultado].nombre = $$.n->nombreVar;
+            // variables[$$.n->resultado].registro = $$.n->resultado;
+            // variables[$$.n->resultado].disponible = true;
 
             // for (int i = 0; i < 64; i++){
             //     printf("\nValor de las variable en la posicion %d: %s\n", i, variables[i].texto);
