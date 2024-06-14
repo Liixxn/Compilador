@@ -388,8 +388,6 @@ struct valorNodoRetorno comprobarValorNodo(struct ast *n, int contadorEtiquetaLo
     borrarReg(n->izq, n->dcha); //borrado de registros (se ponen a true)
 
 
-  } else if (n->tipoNodo == 23){ // nueva condicion if
-
   }
 
   return dato; //Devolvemos el valor

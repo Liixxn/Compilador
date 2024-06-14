@@ -2106,7 +2106,7 @@ yyreduce:
 /* Line 1464 of yacc.c  */
 #line 612 "src/gramatica_python.y"
     { 
-        printf("> [SENTENCIA] - Imprimireee\n");
+        printf("> [SENTENCIA] - Imprimir\n");
 
         (yyval.tr).n = crearNodoNoTerminal((yyvsp[(3) - (4)].tr).n, crearNodoVacio(), 4);
 
